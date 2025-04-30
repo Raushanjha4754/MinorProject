@@ -47,6 +47,7 @@ import {
   ArrowForward
 } from '@mui/icons-material';
 import { DatePicker } from '@mui/x-date-pickers';
+import { InputAdornment } from '@mui/material';
 
 const Attendance = () => {
   const [tabValue, setTabValue] = useState(0);

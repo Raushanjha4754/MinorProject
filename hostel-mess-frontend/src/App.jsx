@@ -1,13 +1,11 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
-import MainLayout from './layouts/MainLayout';
+import StudentLayout from './layouts/StudentLayout';
 import LoginForm from './features/auth/LoginForm';
-import Dashboard from './features/dashboard/Dashboard';
-import StudentList from './features/students/StudentList';
-import RoomManagement from './features/rooms/RoomManagement';
-import FeeManagement from './features/fees/FeeManagement';
-import Attendance from './features/attendance/Attendance';
-import MessManagement from './features/mess/MessManagement';
+import StudentDashboard from './features/dashboard/StudentDashboard';
+import FeePayment from './features/fees/FeePayment';
+import AttendanceView from './features/attendance/AttendanceView';
+import MessMenu from './features/mess/MessMenu';
 
 const theme = createTheme({
   palette: {
@@ -27,13 +25,11 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<LoginForm />} />
-          <Route path="/" element={<MainLayout />}>
-            <Route index element={<Dashboard />} />
-            <Route path="students" element={<StudentList />} />
-            <Route path="rooms" element={<RoomManagement />} />
-            <Route path="fees" element={<FeeManagement />} />
-            <Route path="attendance" element={<Attendance />} />
-            <Route path="mess" element={<MessManagement />} />
+          <Route path="/" element={<StudentLayout />}>
+            <Route index element={<StudentDashboard />} />
+            <Route path="fee-payment" element={<FeePayment />} />
+            <Route path="attendance" element={<AttendanceView />} />
+            <Route path="mess-menu" element={<MessMenu />} />
           </Route>
         </Routes>
       </BrowserRouter>

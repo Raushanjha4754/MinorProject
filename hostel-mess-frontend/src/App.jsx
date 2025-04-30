@@ -1,12 +1,12 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
 import MainLayout from './layouts/MainLayout';
-// import LoginForm from './features/auth/LoginForm';
+import LoginForm from './features/auth/LoginForm';
 import Dashboard from './features/dashboard/Dashboard';
 import StudentList from './features/students/StudentList';
-// import RoomManagement from './features/rooms/RoomManagement';
-// import FeeManagement from './features/fees/FeeManagement';
-// import Attendance from './features/attendance/Attendance';
+import RoomManagement from './features/rooms/RoomManagement';
+import FeeManagement from './features/fees/FeeManagement';
+import Attendance from './features/attendance/Attendance';
 import MessManagement from './features/mess/MessManagement';
 
 const theme = createTheme({

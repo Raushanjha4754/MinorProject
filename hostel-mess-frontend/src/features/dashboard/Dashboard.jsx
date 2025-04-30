@@ -13,8 +13,8 @@ import {
     EventAvailable as AttendanceIcon,
     Report as ReportIcon
   } from '@mui/icons-material';
-//   import RecentActivities from '../../components/RecentActivities';
-//   import StatsChart from '../../components/StatsChart';
+  import RecentActivities from '../../components/RecentActivities';
+  import StatsChart from '../../components/StatsChart';
   
   const StatCard = ({ icon, title, value, subtitle }) => {
     return (

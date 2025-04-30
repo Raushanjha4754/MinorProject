@@ -1,7 +1,7 @@
 import { Box, CssBaseline } from '@mui/material';
 import { Outlet } from 'react-router-dom';
-// import Sidebar from '../components/Sidebar';
-import Topbar from '../components/Topbar';
+import Sidebar from '../components/Sidebar';
+import Topbar from '../components/Topbar'
 
 const MainLayout = () => {
   return (

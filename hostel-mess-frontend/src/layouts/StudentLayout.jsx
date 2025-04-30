@@ -11,7 +11,7 @@ const StudentLayout = () => {
       <Box component="main" sx={{ 
         flexGrow: 1,
         p: 3,
-        marginLeft: '240px', // Matches sidebar width
+        marginLeft: '0px', // Matches sidebar width
         backgroundColor: '#f5f5f5'
       }}>
         <StudentTopbar />

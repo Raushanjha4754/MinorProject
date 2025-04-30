@@ -13,6 +13,7 @@ import {
     Menu as MenuIcon 
   } from '@mui/icons-material';
   import { useState } from 'react';
+  import { Box } from '@mui/material';
   
   const Topbar = () => {
     const [anchorEl, setAnchorEl] = useState(null);

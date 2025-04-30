@@ -24,7 +24,7 @@ import {
   FilterList,
   Person 
 } from '@mui/icons-material';
-// import StudentForm from './StudentForm';
+import StudentForm from './StudentForm';
 
 const StudentList = () => {
   const [students, setStudents] = useState([

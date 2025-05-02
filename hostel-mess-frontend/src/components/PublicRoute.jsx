@@ -1,12 +1,15 @@
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import LoadingScreen from './LoadingScreen';
 
 const PublicRoute = () => {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
 
-  // If user is logged in, redirect to home page
+  if (loading) return <LoadingScreen />;
+  
   if (user) {
-    return <Navigate to="/" replace />;
+    // Redirect to role-specific dashboard
+    return <Navigate to={user.role === 'admin' ? '/admin' : '/student'} replace />;
   }
 
   return <Outlet />;

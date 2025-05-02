@@ -1,36 +1,16 @@
-import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext.js';
-import { LoadingScreen } from './LoadingScreen';
-import { Unauthorized } from './Unauthorized';
+import { Navigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import LoadingScreen from './LoadingScreen'; // Add a proper loading component
 
-/**
- * ProtectedRoute component that checks for authentication and authorization
- * before allowing access to child routes.
- * 
- * @param {Object} props - Component props
- * @param {Array} [props.allowedRoles] - Array of roles allowed to access the route
- * @returns {JSX.Element} - Either the child routes or redirect to login/unauthorized
- */
-const ProtectedRoute = ({ allowedRoles = [] }) => {
-  const { user, token, loading } = useAuth();
-  const location = useLocation();
+export default function ProtectedRoute({ allowedRoles, children }) {
+  const { user, loading } = useAuth();
 
-  if (loading) {
-    return <LoadingScreen fullScreen />;
+  if (loading) return <LoadingScreen />;
+  if (!user) return <Navigate to="/login" replace />;
+  if (!allowedRoles.includes(user.role)) {
+    // Redirect to role-specific home if logged in but wrong route
+    return <Navigate to={user.role === 'admin' ? '/admin' : '/student'} replace />;
   }
 
-  if (!token || !user) {
-    // Redirect to login page, saving the current location to return after login
-    return <Navigate to="/login" state={{ from: location }} replace />;
-  }
-
-  // Check if user has any of the allowed roles
-  if (allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
-    return <Unauthorized />;
-  }
-
-  // If authenticated and authorized, render the child routes
-  return <Outlet />;
-};
-
-export default ProtectedRoute;
+  return children;
+}

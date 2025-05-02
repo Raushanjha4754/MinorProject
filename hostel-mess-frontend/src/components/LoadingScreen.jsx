@@ -1,11 +1,15 @@
+// src/components/LoadingScreen.jsx
 import { Box, CircularProgress } from '@mui/material';
 
-export const LoadingScreen = () => (
+const LoadingScreen = () => (
   <Box sx={{ 
     display: 'flex', 
     justifyContent: 'center', 
-    p: 4
+    alignItems: 'center',
+    minHeight: '100vh'
   }}>
     <CircularProgress />
   </Box>
 );
+
+export default LoadingScreen; 

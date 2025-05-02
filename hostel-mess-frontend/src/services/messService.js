@@ -1,32 +1,4 @@
-// import axios from 'axios';
-
-// const API_URL = '/api/mess';
-
-// const getWeeklyMenu = async (weekOffset = 0) => {
-//   const response = await axios.get(`${API_URL}/menu?week=${weekOffset}`);
-//   return response.data;
-// };
-
-// const submitMealRating = async (data) => {
-//   const response = await axios.post(`${API_URL}/ratings`, data);
-//   return response.data;
-// };
-
-// const submitSpecialRequest = async (data) => {
-//   const response = await axios.post(`${API_URL}/special-requests`, data);
-//   return response.data;
-// };
-
-// export default {
-//   getWeeklyMenu,
-//   submitMealRating,
-//   submitSpecialRequest
-// };
-
-// src/services/messService.js
-
-// Mock data for weekly menu
-// src/services/messService.js
+// src/services/messService
 const mockWeeklyMenu = [
   {
     week: "Current Week",

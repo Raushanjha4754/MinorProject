@@ -1,45 +1,85 @@
-// src/context/AuthContext.js
 import { createContext, useContext, useState, useEffect } from 'react';
-import { login as authLogin, getCurrentUser } from '../api/auth';
+import api from '../api';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem('token'));
   const [loading, setLoading] = useState(true);
 
+  // Initialize auth state
   useEffect(() => {
     const loadUser = async () => {
-      if (token) {
-        try {
-          const userData = await getCurrentUser(token);
-          setUser(userData);
-        } catch (err) {
-          logout();
+      try {
+        const token = localStorage.getItem('token');
+        if (token) {
+          const { data } = await api.getMe();
+          setUser(data.user);
         }
+      } catch (err) {
+        logout();
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
     loadUser();
-  }, [token]);
+  }, []);
 
-  const login = async (email, password) => {
-    const { token, user } = await authLogin(email, password);
+  // Login function
+// In your main AuthContext file (not the one in api/auth)
+const login = async (identifier, password, role) => {
+  try {
+    // Show loading state immediately
+    setLoading(true); 
+
+    const startTime = Date.now();
+    const { token, user } = await api.login(identifier, password, role);
+    
+    console.log(`Login completed in ${Date.now() - startTime}ms`);
+    
     localStorage.setItem('token', token);
-    setToken(token);
     setUser(user);
-  };
+    return user;
 
+  } catch (err) {
+    console.error('Auth Context Error:', {
+      error: err,
+      time: new Date().toISOString()
+    });
+    
+    // Specific error messages
+    let message = err.message;
+    if (message.includes('timeout')) {
+      message = 'Server is taking too long to respond. Please try again later.';
+    } else if (message.includes('credentials')) {
+      message = 'Invalid employee ID or password';
+    }
+
+    throw new Error(message);
+  } finally {
+    setLoading(false);
+  }
+};
+
+  // Logout function
   const logout = () => {
     localStorage.removeItem('token');
-    setToken(null);
     setUser(null);
   };
 
+  // Context value
+  const value = {
+    user,
+    loading,
+    login,
+    logout,
+    isAuthenticated: !!user,
+    isAdmin: user?.role === 'admin'
+  };
+
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, loading }}>
-      {children}
+    <AuthContext.Provider value={value}>
+      {!loading && children}
     </AuthContext.Provider>
   );
 };

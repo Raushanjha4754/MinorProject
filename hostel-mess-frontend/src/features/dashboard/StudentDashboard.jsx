@@ -1,6 +1,7 @@
+// src/features/dashboard/StudentDashboard.jsx
+import React from 'react';
 import { useState, useEffect } from 'react';
-import { useAuth } from '../../context/AuthContext.js';
-import React from 'react'; 
+import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { 
   Box, 
@@ -36,7 +37,34 @@ import { getAttendanceSummary } from '../../api/attendance';
 import { getFeeSummary } from '../../api/fees';
 import { getMessBalance } from '../../api/mess';
 
+const DetailField = ({ label, value, icon, theme }) => (
+  <Box sx={{ 
+    display: 'flex', 
+    alignItems: 'center',
+    mb: 2,
+    gap: 1
+  }}>
+    {icon && React.cloneElement(icon, { 
+      fontSize: 'small', 
+      color: 'action.active' 
+    })}
+    <Box>
+      <Typography variant="subtitle2" sx={{ 
+        fontWeight: 'bold', 
+        color: theme.palette.text.secondary,
+        lineHeight: 1.2
+      }}>
+        {label}:
+      </Typography>
+      <Typography variant="body1" sx={{ pl: 0.5 }}>
+        {value || 'N/A'}
+      </Typography>
+    </Box>
+  </Box>
+);
+
 const StudentDashboard = () => {
+  const navigate = useNavigate();
   const theme = useTheme();
   const { user, token } = useAuth();
   const [student, setStudent] = useState(null);
@@ -56,29 +84,29 @@ const StudentDashboard = () => {
         getMessBalance(token)
       ]);
       
-      setStudent(profile);
-      setAttendanceData(attendance.monthlyData);
+      setStudent(profile.data?.student || profile);
+      setAttendanceData(attendance.data?.monthlyData || attendance.monthlyData);
       
       setStats([
         { 
           title: "Pending Fees", 
-          value: `₹${fees.pending.toLocaleString()}`, 
+          value: `₹${(fees.data?.pending || fees.pending).toLocaleString()}`, 
           icon: <FeesIcon />, 
           color: "error.main",
           action: () => navigate('/fee-payment')
         },
         { 
           title: "Attendance", 
-          value: `${attendance.overallPercentage}%`, 
+          value: `${(attendance.data?.percentage || attendance.overallPercentage)}%`, 
           icon: <AttendanceIcon />, 
-          color: attendance.overallPercentage > 75 ? "success.main" : "warning.main",
+          color: (attendance.data?.percentage || attendance.overallPercentage) > 75 ? "success.main" : "warning.main",
           action: () => navigate('/attendance')
         },
         { 
           title: "Mess Balance", 
-          value: `₹${mess.balance.toLocaleString()}`, 
+          value: `₹${(mess.data?.totalDue || mess.balance).toLocaleString()}`, 
           icon: <MessIcon />, 
-          color: mess.balance > 0 ? "success.main" : "error.main",
+          color: (mess.data?.totalDue || mess.balance) > 0 ? "success.main" : "error.main",
           action: () => navigate('/mess-billing')
         },
       ]);
@@ -188,7 +216,7 @@ const StudentDashboard = () => {
                 {student?.name}
               </Typography>
               <Chip 
-                label={`Roll No: ${student?.rollNo}`} 
+                label={`Roll No: ${student?.rollNumber || student?.rollNo || 'N/A'}`} 
                 color="primary" 
                 size="small" 
                 sx={{ mt: 1 }}
@@ -198,16 +226,16 @@ const StudentDashboard = () => {
             <Grid item xs={12} md={9}>
               <Grid container spacing={2}>
                 <Grid item xs={12} md={6}>
-                  <DetailField label="Branch" value={student?.branch} icon={<BranchIcon />} />
-                  <DetailField label="Course" value={student?.course} />
-                  <DetailField label="Year" value={student?.year} />
-                  <DetailField label="Hostel" value={student?.hostel?.name} icon={<HostelIcon />} />
+                  <DetailField label="Branch" value={student?.branch} icon={<BranchIcon />} theme={theme} />
+                  <DetailField label="Course" value={student?.course} theme={theme} />
+                  <DetailField label="Year" value={student?.year} theme={theme} />
+                  <DetailField label="Hostel" value={student?.hostel?.name} icon={<HostelIcon />} theme={theme} />
                 </Grid>
                 <Grid item xs={12} md={6}>
-                  <DetailField label="Email" value={student?.email} icon={<EmailIcon />} />
-                  <DetailField label="Phone" value={student?.mobile} icon={<PhoneIcon />} />
-                  <DetailField label="Date of Birth" value={student?.dob} icon={<DobIcon />} />
-                  <DetailField label="Blood Group" value={student?.bloodGroup} icon={<BloodIcon />} />
+                  <DetailField label="Email" value={student?.email} icon={<EmailIcon />} theme={theme} />
+                  <DetailField label="Phone" value={student?.contactNumber || student?.mobile} icon={<PhoneIcon />} theme={theme} />
+                  <DetailField label="Date of Birth" value={student?.dob} icon={<DobIcon />} theme={theme} />
+                  <DetailField label="Blood Group" value={student?.bloodGroup} icon={<BloodIcon />} theme={theme} />
                 </Grid>
               </Grid>
             </Grid>
@@ -299,33 +327,5 @@ const StudentDashboard = () => {
     </Box>
   );
 };
-
-const DetailField = ({ label, value, icon }) => (
-  <Box sx={{ 
-    display: 'flex', 
-    alignItems: 'center',
-    mb: 2,
-    gap: 1
-  }}>
-    {icon && React.cloneElement(icon, { 
-      fontSize: 'small', 
-      color: 'action.active' 
-    })}
-    <Box>
-      <Typography variant="subtitle2" sx={{ 
-        fontWeight: 'bold', 
-        color: theme => theme.palette.text.secondary,
-        lineHeight: 1.2
-      }}>
-        {label}:
-      </Typography>
-      <Typography variant="body1" sx={{
-        pl: 0.5
-      }}>
-        {value || 'N/A'}
-      </Typography>
-    </Box>
-  </Box>
-);
 
 export default StudentDashboard;

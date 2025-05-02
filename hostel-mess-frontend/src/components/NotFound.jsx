@@ -1,3 +1,6 @@
+
+// src/components/NotFound.jsx
+
 import { Button, Typography, Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 

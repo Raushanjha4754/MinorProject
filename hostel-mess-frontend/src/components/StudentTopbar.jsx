@@ -1,3 +1,5 @@
+// src/components/StudentTopbar
+
 import { 
   AppBar, 
   Toolbar, 
@@ -6,9 +8,9 @@ import {
   IconButton 
 } from '@mui/material';
 import { Logout } from '@mui/icons-material';
-import NitjLogo from '../assets/logo_nitj.png'; 
+import Logo from '../assets/logo_nitj.png'; 
 
-const NitjTopbar = () => {
+const Topbar = () => {
   return (
     <AppBar 
       position="static"
@@ -33,7 +35,7 @@ const NitjTopbar = () => {
         }}>
           <Box
             component="img"
-            src={NitjLogo}
+            src={Logo}
             alt="NIT Jalandhar Logo"
             sx={{
               height: '80px',
@@ -102,4 +104,4 @@ const NitjTopbar = () => {
   );
 };
 
-export default NitjTopbar;
+export default Topbar;

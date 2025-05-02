@@ -1,138 +1,119 @@
+// src/features/attendance/AttendanceView.jsx
+import { useState, useEffect } from 'react';
+import { useAuth } from '../../context/AuthContext';
+import api from '../../api';
 import { 
-  Typography, 
-  Box, 
-  Card, 
-  CardContent,
-  Divider,
-  Button,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Chip,
-  Modal,
-  TextField,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  Grid
+  Box, Typography, Table, TableBody, TableCell, 
+  TableContainer, TableHead, TableRow, Paper, 
+  Button, Modal, TextField, FormControl, 
+  InputLabel, Select, MenuItem, Chip, CircularProgress
 } from '@mui/material';
-import { CalendarToday, EventAvailable, EventBusy, Send } from '@mui/icons-material';
-import { useState } from 'react';
+import { EventAvailable, EventBusy, Send } from '@mui/icons-material';
 
 const AttendanceView = () => {
+  const { user } = useAuth();
+  const [attendance, setAttendance] = useState([]);
+  const [summary, setSummary] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [openModal, setOpenModal] = useState(false);
   const [leaveRequest, setLeaveRequest] = useState({
     date: '',
-    type: 'Casual',
     reason: ''
   });
 
-  // Sample attendance data
-  const attendanceData = [
-    { month: 'January', workingDays: 22, present: 20, absent: 2, percentage: 90.9 },
-    { month: 'February', workingDays: 20, present: 18, absent: 2, percentage: 90.0 },
-    { month: 'March', workingDays: 23, present: 22, absent: 1, percentage: 95.7 },
-    { month: 'April', workingDays: 21, present: 19, absent: 2, percentage: 90.5 },
-    { month: 'May', workingDays: 22, present: 21, absent: 1, percentage: 95.5 },
-  ];
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const [attendanceRes, summaryRes] = await Promise.all([
+          api.getMyAttendance(),
+          api.getAttendanceSummary()
+        ]);
+        setAttendance(attendanceRes.data.attendance);
+        setSummary(summaryRes.data);
+      } catch (err) {
+        console.error('Failed to fetch attendance data:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const handleLeaveSubmit = () => {
-    console.log('Leave request submitted:', leaveRequest);
-    setOpenModal(false);
-    setLeaveRequest({ date: '', type: 'Casual', reason: '' });
-    // Add API call here
+    fetchData();
+  }, []);
+
+  const handleSubmitLeave = async () => {
+    try {
+      await api.applyForLeave(leaveRequest);
+      // Refresh data
+      const res = await api.getMyAttendance();
+      setAttendance(res.data.attendance);
+      setOpenModal(false);
+      setLeaveRequest({ date: '', reason: '' });
+    } catch (err) {
+      console.error('Failed to submit leave:', err);
+    }
   };
+
+  if (loading) return <CircularProgress />;
 
   return (
     <Box sx={{ p: 3 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h4" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <EventAvailable /> My Attendance
-        </Typography>
-        <Button 
-          variant="contained" 
-          startIcon={<EventBusy />}
-          onClick={() => setOpenModal(true)}
-        >
-          Apply for Leave
-        </Button>
-      </Box>
-
-      {/* Attendance Summary Card */}
-      <Card sx={{ mb: 3 }}>
-        <CardContent>
+      {/* Summary Card */}
+      {summary && (
+        <Paper sx={{ p: 3, mb: 3 }}>
           <Typography variant="h6" gutterBottom>
             Current Month Summary
           </Typography>
-          <Divider sx={{ mb: 2 }} />
-          <Grid container spacing={2}>
-            <Grid item xs={12} md={4}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <CalendarToday color="primary" />
-                <Typography>Working Days: 22</Typography>
-              </Box>
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <EventAvailable color="success" />
-                <Typography>Present: 20</Typography>
-              </Box>
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <EventBusy color="error" />
-                <Typography>Absent: 2</Typography>
-              </Box>
-            </Grid>
-          </Grid>
-          <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
-            <Typography variant="body1" sx={{ mr: 1 }}>Overall Attendance:</Typography>
-            <Chip 
-              label="90.9%" 
-              color="success" 
-              variant="outlined"
-              size="small"
-            />
+          <Box display="flex" gap={3}>
+            <Box>
+              <Typography>Present: {summary.present}</Typography>
+              <Typography>Absent: {summary.absent}</Typography>
+              <Typography>Leave: {summary.leave}</Typography>
+            </Box>
+            <Box>
+              <Typography>Working Days: {summary.workingDays}</Typography>
+              <Typography>
+                Attendance: <Chip label={`${summary.percentage}%`} color="primary" />
+              </Typography>
+            </Box>
           </Box>
-        </CardContent>
-      </Card>
+        </Paper>
+      )}
 
-      {/* Monthly Attendance Table */}
-      <Typography variant="h6" gutterBottom>
-        Monthly Records
-      </Typography>
+      {/* Leave Application Button */}
+      <Button 
+        variant="contained" 
+        startIcon={<EventBusy />}
+        onClick={() => setOpenModal(true)}
+        sx={{ mb: 3 }}
+      >
+        Apply for Leave
+      </Button>
+
+      {/* Attendance Table */}
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Month</TableCell>
-              <TableCell align="center">Working Days</TableCell>
-              <TableCell align="center">Present</TableCell>
-              <TableCell align="center">Absent</TableCell>
-              <TableCell align="center">Percentage</TableCell>
+              <TableCell>Date</TableCell>
+              <TableCell>Status</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {attendanceData.map((row) => (
-              <TableRow key={row.month}>
-                <TableCell>{row.month}</TableCell>
-                <TableCell align="center">{row.workingDays}</TableCell>
-                <TableCell align="center">{row.present}</TableCell>
-                <TableCell align="center">{row.absent}</TableCell>
-                <TableCell align="center">
+            {attendance.map((record) => (
+              <TableRow key={record._id}>
+                <TableCell>{new Date(record.date).toLocaleDateString()}</TableCell>
+                <TableCell>
                   <Chip 
-                    label={`${row.percentage}%`} 
+                    label={record.status} 
                     color={
-                      row.percentage > 90 ? 'success' : 
-                      row.percentage > 75 ? 'warning' : 'error'
+                      record.status === 'present' ? 'success' : 
+                      record.status === 'leave' ? 'warning' : 'error'
                     } 
-                    size="small"
                   />
+                  {record.status === 'leave' && record.leaveReason && (
+                    <Typography variant="caption"> ({record.leaveReason})</Typography>
+                  )}
                 </TableCell>
               </TableRow>
             ))}
@@ -141,12 +122,8 @@ const AttendanceView = () => {
       </TableContainer>
 
       {/* Leave Application Modal */}
-      <Modal
-        open={openModal}
-        onClose={() => setOpenModal(false)}
-        aria-labelledby="leave-application-modal"
-      >
-        <Box sx={{
+      <Modal open={openModal} onClose={() => setOpenModal(false)}>
+        <Box sx={{ 
           position: 'absolute',
           top: '50%',
           left: '50%',
@@ -160,55 +137,32 @@ const AttendanceView = () => {
           <Typography variant="h6" gutterBottom>
             Apply for Leave
           </Typography>
-          <Divider sx={{ mb: 2 }} />
-          <form>
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="Date"
-                  type="date"
-                  InputLabelProps={{ shrink: true }}
-                  value={leaveRequest.date}
-                  onChange={(e) => setLeaveRequest({...leaveRequest, date: e.target.value})}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <FormControl fullWidth>
-                  <InputLabel>Leave Type</InputLabel>
-                  <Select
-                    value={leaveRequest.type}
-                    label="Leave Type"
-                    onChange={(e) => setLeaveRequest({...leaveRequest, type: e.target.value})}
-                  >
-                    <MenuItem value="Casual">Casual Leave</MenuItem>
-                    <MenuItem value="Medical">Medical Leave</MenuItem>
-                    <MenuItem value="Emergency">Emergency Leave</MenuItem>
-                  </Select>
-                </FormControl>
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  multiline
-                  rows={3}
-                  label="Reason"
-                  value={leaveRequest.reason}
-                  onChange={(e) => setLeaveRequest({...leaveRequest, reason: e.target.value})}
-                />
-              </Grid>
-              <Grid item xs={12} sx={{ mt: 2 }}>
-                <Button 
-                  fullWidth
-                  variant="contained" 
-                  endIcon={<Send />}
-                  onClick={handleLeaveSubmit}
-                >
-                  Submit Leave Request
-                </Button>
-              </Grid>
-            </Grid>
-          </form>
+          <TextField
+            fullWidth
+            label="Date"
+            type="date"
+            InputLabelProps={{ shrink: true }}
+            value={leaveRequest.date}
+            onChange={(e) => setLeaveRequest({...leaveRequest, date: e.target.value})}
+            sx={{ mb: 2 }}
+          />
+          <TextField
+            fullWidth
+            multiline
+            rows={3}
+            label="Reason"
+            value={leaveRequest.reason}
+            onChange={(e) => setLeaveRequest({...leaveRequest, reason: e.target.value})}
+            sx={{ mb: 2 }}
+          />
+          <Button 
+            variant="contained" 
+            endIcon={<Send />}
+            onClick={handleSubmitLeave}
+            disabled={!leaveRequest.date || !leaveRequest.reason}
+          >
+            Submit Leave Request
+          </Button>
         </Box>
       </Modal>
     </Box>

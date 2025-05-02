@@ -1,16 +1,46 @@
-// src/api/auth.js
-import axios from 'axios';
+// src/api/auth
+import React, { createContext, useState, useEffect } from 'react';
+import api from '../api';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+export const AuthContext = createContext();
 
-export const login = async (email, password) => {
-  const response = await axios.post(`${API_URL}/auth/login`, { email, password });
-  return response.data;
-};
+export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [token, setToken] = useState(localStorage.getItem('token'));
+  const [loading, setLoading] = useState(true);
 
-export const getCurrentUser = async (token) => {
-  const response = await axios.get(`${API_URL}/auth/me`, {
-    headers: { 'x-auth-token': token }
-  });
-  return response.data;
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        if (token) {
+          const { data } = await api.getMe();
+          setUser(data.user);
+        }
+      } catch (err) {
+        console.error(err);
+        logout();
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUser();
+  }, [token]);
+
+  const login = async (email, password) => {
+    const { data } = await api.login({ email, password });
+    localStorage.setItem('token', data.token);
+    setToken(data.token);
+  };
+
+  const logout = () => {
+    localStorage.removeItem('token');
+    setToken(null);
+    setUser(null);
+  };
+
+  return (
+    <AuthContext.Provider value={{ user, token, login, logout, loading }}>
+      {children}
+    </AuthContext.Provider>
+  );
 };

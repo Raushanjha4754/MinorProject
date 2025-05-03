@@ -41,9 +41,9 @@ const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
 const { validateLogin, validateRegister } = require('../middleware/validation');
-const User = require('../models/User'); // Make sure this import exists
+const User = require('../models/User'); 
 
-// Add this debug route ABOVE the other routes
+// debug route 
 router.post('/debug-login', async (req, res) => {
     try {
       const { employee_id, password } = req.body;

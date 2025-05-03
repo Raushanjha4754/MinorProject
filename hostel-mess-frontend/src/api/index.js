@@ -53,12 +53,11 @@ export const login = async (identifier, password, role) => {
         role: role.trim()
       };
   
-      const response = await axios.post('/auth/login', payload, {
-        signal: controller.signal,
-        timeout: 5000
+      const response = await api.post('/auth/login', { 
+        employee_id: identifier,
+        password,
+        role 
       });
-  
-      clearTimeout(timeoutId);
       return response.data;
   
     } catch (error) {

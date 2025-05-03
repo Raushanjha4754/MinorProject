@@ -4,6 +4,7 @@ const morgan = require('morgan');
 const cors = require('cors');
 const errorHandler = require('./middleware/errorHandler');
 const config = require('./config/config');
+const bodyParser = require('body-parser')
 
 // Import routes
 const authRoutes = require('./routes/auth');
@@ -17,6 +18,7 @@ const messRoutes = require('./routes/messRoutes');
 const app = express();
 
 // Middleware
+app.use(bodyParser.json())
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -31,7 +33,7 @@ mongoose.connect(config.mongodb.uri, config.mongodb.options)
   .catch(err => console.error('MongoDB connection error:', err));
 
 // Routes
-app.use('/api/auth', authRoutes);
+app.use('/api', authRoutes);
 app.use('/api/students', studentRoutes);
 app.use('/api/attendance', attendanceRoutes);
 app.use('/api/complaints', complaintRoutes);
@@ -51,6 +53,7 @@ app.use(errorHandler);
 
 // Start server
 const port = config.port;
+
 app.listen(port, () => {
   console.log(`Server running in ${config.env} mode on port ${port}`);
 });

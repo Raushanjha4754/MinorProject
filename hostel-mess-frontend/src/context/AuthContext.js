@@ -6,8 +6,6 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-
-  // Initialize auth state
   useEffect(() => {
     const loadUser = async () => {
       try {
@@ -24,9 +22,6 @@ export const AuthProvider = ({ children }) => {
     };
     loadUser();
   }, []);
-
-  // Login function
-// In your main AuthContext file (not the one in api/auth)
 const login = async (identifier, password, role) => {
   try {
     // Show loading state immediately

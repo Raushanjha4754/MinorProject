@@ -8,7 +8,6 @@ const PublicRoute = () => {
   if (loading) return <LoadingScreen />;
   
   if (user) {
-    // Redirect to role-specific dashboard
     return <Navigate to={user.role === 'admin' ? '/admin' : '/student'} replace />;
   }
 

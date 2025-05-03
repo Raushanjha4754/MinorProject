@@ -1,5 +1,3 @@
-// src/components/StudentTopbar
-
 import { 
   AppBar, 
   Toolbar, 
@@ -27,7 +25,6 @@ const Topbar = () => {
         paddingRight: '16px',
         minHeight: '64px'
       }}>
-        {/* Left side - Logo and Institute Name */}
         <Box sx={{ 
           display: 'flex', 
           alignItems: 'center',
@@ -54,8 +51,6 @@ const Topbar = () => {
             DR B R AMBEDKAR NIT JALANDHAR
           </Typography>
         </Box>
-
-        {/* Right side - Student Info and Logout */}
         <Box sx={{ 
           display: 'flex', 
           alignItems: 'center',

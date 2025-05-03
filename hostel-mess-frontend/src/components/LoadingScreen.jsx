@@ -1,4 +1,3 @@
-// src/components/LoadingScreen.jsx
 import { Box, CircularProgress } from '@mui/material';
 
 const LoadingScreen = () => (

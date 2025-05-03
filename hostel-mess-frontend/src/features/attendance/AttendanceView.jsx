@@ -1,4 +1,3 @@
-// src/features/attendance/AttendanceView.jsx
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../api';
@@ -44,7 +43,6 @@ const AttendanceView = () => {
   const handleSubmitLeave = async () => {
     try {
       await api.applyForLeave(leaveRequest);
-      // Refresh data
       const res = await api.getMyAttendance();
       setAttendance(res.data.attendance);
       setOpenModal(false);

@@ -1,4 +1,3 @@
-// src/auth/LoginForm.jsx
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -31,10 +30,10 @@ import hostelImage from '../assets/mega-hostel-boys.jpg';
 
 const LoginForm = () => {
   const [formData, setFormData] = useState({
-    identifier: '', // 8-digit rollNumber or employeeId
+    identifier: '',
     password: '',
     showPassword: false,
-    role: localStorage.getItem('preferredRole') || 'student' // Remember role selection
+    role: localStorage.getItem('preferredRole') || 'student'
   });
   
   const [error, setError] = useState('');
@@ -47,8 +46,6 @@ const LoginForm = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    
-    // Strict 8-digit validation for identifier
     if (name === 'identifier') {
       if (value === '' || /^\d{0,8}$/.test(value)) {
         setFormData(prev => ({
@@ -58,8 +55,6 @@ const LoginForm = () => {
       }
       return;
     }
-    
-    // Normal handling for other fields
     setFormData(prev => ({
       ...prev,
       [name]: value
@@ -67,7 +62,7 @@ const LoginForm = () => {
   };
 
   const handleRoleChange = (event, newValue) => {
-    localStorage.setItem('preferredRole', newValue); // Remember role
+    localStorage.setItem('preferredRole', newValue);
     setFormData(prev => ({
       ...prev,
       role: newValue,
@@ -83,8 +78,6 @@ const LoginForm = () => {
         : 'Roll Number is required');
       return false;
     }
-    
-    // 8-digit validation
     if (!/^\d{8}$/.test(formData.identifier)) {
       setError(`Must be a 8-digit ${formData.role === 'admin' ? 'Employee ID' : 'Roll Number'}`);
       return false;

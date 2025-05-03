@@ -1,6 +1,3 @@
-
-// src/components/Unauthorized
-
 import { Button, Typography, Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 

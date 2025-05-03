@@ -1,6 +1,4 @@
-
 // src/auth/LoginForm.jsx
-
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -33,10 +31,10 @@ import hostelImage from '../assets/mega-hostel-boys.jpg';
 
 const LoginForm = () => {
   const [formData, setFormData] = useState({
-    identifier: '', // Will be employeeId or rollNumber based on role
+    identifier: '', // 8-digit rollNumber or employeeId
     password: '',
     showPassword: false,
-    role: 'student' // 'student' or 'admin'
+    role: localStorage.getItem('preferredRole') || 'student' // Remember role selection
   });
   
   const [error, setError] = useState('');
@@ -49,6 +47,19 @@ const LoginForm = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    
+    // Strict 8-digit validation for identifier
+    if (name === 'identifier') {
+      if (value === '' || /^\d{0,8}$/.test(value)) {
+        setFormData(prev => ({
+          ...prev,
+          [name]: value
+        }));
+      }
+      return;
+    }
+    
+    // Normal handling for other fields
     setFormData(prev => ({
       ...prev,
       [name]: value
@@ -56,23 +67,45 @@ const LoginForm = () => {
   };
 
   const handleRoleChange = (event, newValue) => {
+    localStorage.setItem('preferredRole', newValue); // Remember role
     setFormData(prev => ({
       ...prev,
       role: newValue,
-      identifier: '', // Clear identifier when switching roles
-      password: ''   // Clear password when switching roles
+      identifier: '',
+      password: ''
     }));
+  };
+
+  const validateForm = () => {
+    if (!formData.identifier.trim()) {
+      setError(formData.role === 'admin' 
+        ? 'Employee ID is required' 
+        : 'Roll Number is required');
+      return false;
+    }
+    
+    // 6-digit validation
+    if (!/^\d{8}$/.test(formData.identifier)) {
+      setError(`Must be a 8-digit ${formData.role === 'admin' ? 'Employee ID' : 'Roll Number'}`);
+      return false;
+    }
+    
+    if (!formData.password) {
+      setError('Password is required');
+      return false;
+    }
+    
+    return true;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+    
+    if (!validateForm()) return;
+    
     try {
-      // Add validation
-      if (!formData.identifier || !formData.password) {
-        setError('Please fill in all fields');
-        return;
-      }
-  
+      setLoading(true);
       await login(
         formData.identifier,
         formData.password,
@@ -80,11 +113,12 @@ const LoginForm = () => {
       );
       navigate(from, { replace: true });
     } catch (err) {
-      setError(err.message);
-      console.error('Form submission error:', {
-        error: err,
-        formData
-      });
+      setError(
+        err.response?.data?.message || 
+        'Login failed. Please check your credentials and try again.'
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -112,9 +146,8 @@ const LoginForm = () => {
       }}>
         <Fade in timeout={800}>
           <Paper elevation={10} sx={{ 
-            p: 4, 
-            width: '100%', 
-            maxWidth: 500,
+            p: { xs: 3, sm: 4 },
+            width: { xs: '95%', sm: '100%', md: 500 },
             borderRadius: 4,
             backdropFilter: 'blur(5px)',
             backgroundColor: 'rgba(255, 255, 255, 0.9)'
@@ -192,12 +225,18 @@ const LoginForm = () => {
                 required
                 fullWidth
                 id="identifier"
-                label={formData.role === 'admin' ? 'Employee ID' : 'Roll Number'}
+                label={formData.role === 'admin' ? 'Employee ID (8 digits)' : 'Roll Number (8 digits)'}
                 name="identifier"
-                autoComplete={formData.role === 'admin' ? 'username' : 'off'}
-                autoFocus
                 value={formData.identifier}
                 onChange={handleChange}
+                inputProps={{
+                  maxLength: 8,
+                  inputMode: 'numeric',
+                  pattern: '\\d{8}',
+                  title: formData.role === 'admin' 
+                    ? '8-digit Employee ID' 
+                    : '8-digit Roll Number'
+                }}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">

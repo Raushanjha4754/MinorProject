@@ -1,4 +1,3 @@
-// src/admin/components/StatsCard.jsx
 import { Card, CardContent, Typography, Box, Grid } from '@mui/material';
 import {
   People as PeopleIcon,

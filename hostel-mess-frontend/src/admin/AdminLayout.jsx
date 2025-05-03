@@ -173,8 +173,8 @@ const AdminLayout = () => {
           mt: 8 
         }}
       >
-        <Toolbar /> {/* Spacer for AppBar */}
-        <Outlet /> {/* Renders nested routes (e.g., AdminDashboard, ManageStudents) */}
+        <Toolbar /> 
+        <Outlet />
       </Box>
     </Box>
   );

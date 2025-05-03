@@ -1,4 +1,3 @@
-// src/admin/components/AdminTopbar
 import { AppBar, Toolbar, Typography, IconButton, Avatar, Menu, MenuItem } from '@mui/material';
 import { Menu as MenuIcon, Notifications as NotificationsIcon } from '@mui/icons-material';
 import { useState } from 'react';

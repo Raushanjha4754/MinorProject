@@ -1,4 +1,3 @@
-// src/admin/components/AdminSidebar
 import { Drawer, List, ListItem, ListItemIcon, ListItemText, Divider, Typography, Box } from '@mui/material';
 import {
   Dashboard as DashboardIcon,

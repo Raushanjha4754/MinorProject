@@ -84,7 +84,7 @@ const LoginForm = () => {
       return false;
     }
     
-    // 6-digit validation
+    // 8-digit validation
     if (!/^\d{8}$/.test(formData.identifier)) {
       setError(`Must be a 8-digit ${formData.role === 'admin' ? 'Employee ID' : 'Roll Number'}`);
       return false;
@@ -225,7 +225,7 @@ const LoginForm = () => {
                 required
                 fullWidth
                 id="identifier"
-                label={formData.role === 'admin' ? 'Employee ID (8 digits)' : 'Roll Number (8 digits)'}
+                label={formData.role === 'admin' ? 'Employee ID' : 'Roll Number'}
                 name="identifier"
                 value={formData.identifier}
                 onChange={handleChange}

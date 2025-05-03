@@ -1,5 +1,3 @@
-// src/admin/Dashboard
-// src/admin/Dashboard
 import { Box, Grid, Typography, CircularProgress } from '@mui/material';
 import { useEffect, useState } from 'react';
 import StatsCard from './components/StatsCard';

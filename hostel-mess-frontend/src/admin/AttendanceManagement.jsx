@@ -1,4 +1,3 @@
-// src/admin/AttendanceManagement.jsx
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import api from './api/attendanceApi';
@@ -52,7 +51,6 @@ const AttendanceManagement = () => {
       } else {
         await api.admin.markAttendance(data);
       }
-      // Refresh data
       const res = await api.admin.getAllAttendance(filter);
       setAttendance(res.data.attendance);
       setOpenForm(false);
@@ -65,7 +63,6 @@ const AttendanceManagement = () => {
   const handleApproveLeave = async (status) => {
     try {
       await api.admin.approveLeave(currentAttendance._id, { status });
-      // Refresh data
       const res = await api.admin.getAllAttendance(filter);
       setAttendance(res.data.attendance);
       setOpenApproveDialog(false);
@@ -80,8 +77,6 @@ const AttendanceManagement = () => {
       <Typography variant="h4" gutterBottom>
         Attendance Management
       </Typography>
-
-      {/* Filter Controls */}
       <Grid container spacing={2} sx={{ mb: 3 }}>
         <Grid item xs={12} md={4}>
           <FormControl fullWidth>
@@ -126,8 +121,6 @@ const AttendanceManagement = () => {
           />
         </Grid>
       </Grid>
-
-      {/* Add New Button */}
       <Button
         variant="contained"
         startIcon={<Add />}
@@ -232,8 +225,6 @@ const AttendanceManagement = () => {
           </Table>
         </TableContainer>
       )}
-
-      {/* Attendance Form Modal */}
       <Dialog open={openForm} onClose={() => setOpenForm(false)}>
         <DialogTitle>
           {currentAttendance ? 'Edit Attendance' : 'Mark Attendance'}
@@ -298,8 +289,6 @@ const AttendanceManagement = () => {
           </Button>
         </DialogActions>
       </Dialog>
-
-      {/* Approve Leave Dialog */}
       <Dialog open={openApproveDialog} onClose={() => setOpenApproveDialog(false)}>
         <DialogTitle>Leave Application</DialogTitle>
         <DialogContent>

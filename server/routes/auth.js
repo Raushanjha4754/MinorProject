@@ -7,7 +7,7 @@ const { validateLogin, validateRegister } = require('../middleware/validation');
 const User = require('../models/User'); 
   
 
-// Keep your existing routes below
+
 router.post('/login', validateLogin, authController.login);
 router.post('/register', validateRegister, authController.register);
 router.get('/me', authController.protect, authController.getMe);

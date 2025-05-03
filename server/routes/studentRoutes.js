@@ -4,14 +4,14 @@ const router = express.Router();
 const studentController = require('../controllers/studentController');
 const authController = require('../controllers/authController');
 
-// Protect all routes
+//protect all routes
 router.use(authController.protect);
 
-// Student profile
+//student profile
 router.get('/me', studentController.getMyProfile);
 router.put('/me', studentController.updateMyProfile);
 
-// Admin only routes
+//admin only routes
 router.use(authController.restrictTo('admin'));
 router.get('/', studentController.getAllStudents);
 router.post('/', studentController.createStudent);

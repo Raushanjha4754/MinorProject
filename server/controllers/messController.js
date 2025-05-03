@@ -25,7 +25,7 @@ exports.getCurrentMenu = catchAsync(async (req, res, next) => {
   });
 });
 
-// Create mess menu (admin only)
+// create and update mess menu (admin)
 exports.createMenu = catchAsync(async (req, res, next) => {
   const { weekStartDate, weekEndDate, menuItems } = req.body;
 
@@ -54,7 +54,7 @@ exports.createMenu = catchAsync(async (req, res, next) => {
   });
 });
 
-// Get student's mess billing
+// student's mess billing 
 exports.getMyBilling = catchAsync(async (req, res, next) => {
   // In a real application, you would query the billing records
   // For this example, we'll return mock data
@@ -86,7 +86,7 @@ exports.getMyBilling = catchAsync(async (req, res, next) => {
     const date = new Date(currentYear, currentMonth, day);
     const dayOfWeek = date.getDay(); // 0 = Sunday, 1 = Monday, etc.
     
-    // Skip weekends (optional)
+  
     if (dayOfWeek === 0 || dayOfWeek === 6) continue;
     
     dailyBilling.push({
@@ -112,10 +112,9 @@ exports.getMyBilling = catchAsync(async (req, res, next) => {
   });
 });
 
-// Get all mess billing (admin only)
+
 exports.getAllBilling = catchAsync(async (req, res, next) => {
-  // In a real application, you would query all billing records
-  // For this example, we'll return mock data
+
   
   const billingRecords = [
     {
@@ -143,7 +142,7 @@ exports.getAllBilling = catchAsync(async (req, res, next) => {
   });
 });
 
-// Create billing record (admin only)
+//creating a billing record of mess
 exports.createBilling = catchAsync(async (req, res, next) => {
   const { student, amount, description } = req.body;
 
@@ -153,8 +152,7 @@ exports.createBilling = catchAsync(async (req, res, next) => {
     return next(new AppError('No student found with that ID', 404));
   }
 
-  // In a real application, you would create a billing record in the database
-  // For this example, we'll just return a success response
+
   
   res.status(201).json({
     status: 'success',

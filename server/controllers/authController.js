@@ -21,7 +21,7 @@ exports.login = async (req, res) => {
       });
     }
 
-    // 1. Find user (include password field)
+    // 1. Finding the user: 
     const user = await User.findOne({ employee_id }).select('+password');
 
     if (!user) {
@@ -40,7 +40,7 @@ exports.login = async (req, res) => {
     }
     
 
-    // 2. Verify password using bcrypt
+    // 2. Verifying password entered using bcrypt
     const isMatch = await bcrypt.compare(password, user.password);
     
     console.log('Comparing:', {
@@ -57,7 +57,7 @@ exports.login = async (req, res) => {
       });
     }
 
-    // 3. Generate JWT token
+    // 3. Generate JWT token after verifying password
     const token = jwt.sign(
       { id: user._id },
       process.env.JWT_SECRET,

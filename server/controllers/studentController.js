@@ -12,7 +12,7 @@ const filterObj = (obj, ...allowedFields) => {
   return newObj;
 };
 
-// Get all students (admin only)
+
 exports.getAllStudents = catchAsync(async (req, res, next) => {
   const students = await User.find({ role: 'student' })
     .populate('hostel')
@@ -27,7 +27,7 @@ exports.getAllStudents = catchAsync(async (req, res, next) => {
   });
 });
 
-// Create a new student (admin only)
+
 exports.createStudent = catchAsync(async (req, res, next) => {
   const { name, email, password, passwordConfirm, rollNumber, hostel, roomNumber } = req.body;
 
@@ -45,7 +45,7 @@ exports.createStudent = catchAsync(async (req, res, next) => {
     roomNumber
   });
 
-  // Remove password from output
+  //remove password from output
   newStudent.password = undefined;
 
   res.status(201).json({
@@ -56,7 +56,7 @@ exports.createStudent = catchAsync(async (req, res, next) => {
   });
 });
 
-// Get a specific student (admin only)
+//get a specific student (admin)
 exports.getStudent = catchAsync(async (req, res, next) => {
   const student = await User.findById(req.params.id)
     .populate('hostel')
@@ -74,7 +74,7 @@ exports.getStudent = catchAsync(async (req, res, next) => {
   });
 });
 
-// Update student (admin only)
+//update student by (admin)
 exports.updateStudent = catchAsync(async (req, res, next) => {
   // Filter out unwanted fields that should not be updated
   const filteredBody = filterObj(
@@ -109,7 +109,7 @@ exports.updateStudent = catchAsync(async (req, res, next) => {
   });
 });
 
-// Delete student (admin only)
+//delete or remove student (admin)
 exports.deleteStudent = catchAsync(async (req, res, next) => {
   const student = await User.findByIdAndUpdate(
     req.params.id,
@@ -127,7 +127,7 @@ exports.deleteStudent = catchAsync(async (req, res, next) => {
   });
 });
 
-// Get current student profile
+
 exports.getMyProfile = catchAsync(async (req, res, next) => {
   const student = await User.findById(req.user.id)
     .populate('hostel')
@@ -141,9 +141,9 @@ exports.getMyProfile = catchAsync(async (req, res, next) => {
   });
 });
 
-// Update current student profile
+//update student profile
 exports.updateMyProfile = catchAsync(async (req, res, next) => {
-  // 1) Create error if user POSTs password data
+  
   if (req.body.password || req.body.passwordConfirm) {
     return next(
       new AppError(
@@ -153,7 +153,7 @@ exports.updateMyProfile = catchAsync(async (req, res, next) => {
     );
   }
 
-  // 2) Filtered out unwanted fields names that are not allowed to be updated
+ 
   const filteredBody = filterObj(
     req.body,
     'name',
@@ -163,7 +163,7 @@ exports.updateMyProfile = catchAsync(async (req, res, next) => {
     'bloodGroup'
   );
 
-  // 3) Update user document
+
   const updatedStudent = await User.findByIdAndUpdate(
     req.user.id,
     filteredBody,

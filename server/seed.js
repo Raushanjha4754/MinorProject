@@ -17,7 +17,7 @@ const MONGODB_URI = process.env.MONGODB_URI.replace(
 const seedDB = async () => {
     try {
       await mongoose.connect(MONGODB_URI);
-      console.log('✅ DB connection successful!');
+      console.log('DB connection successful!');
   
       // Clear only users collection
       await User.deleteMany({});
@@ -52,8 +52,8 @@ const seedDB = async () => {
   
       await User.create(admins);
   
-      console.log('✅ Admins created successfully!');
-      console.log('🔐 Use these exact credentials:');
+      console.log('Admins created successfully!');
+      console.log('Use these exact credentials:');
       admins.forEach(admin => {
         console.log(`\nEmployee ID: ${admin.employee_id}`);
         console.log(`Password: ${admin.password}`);
@@ -61,7 +61,7 @@ const seedDB = async () => {
   
       process.exit();
     } catch (err) {
-      console.error('❌ Seeding failed:', err.message);
+      console.error('Seeding failed:', err.message);
       process.exit(1);
     }
   };

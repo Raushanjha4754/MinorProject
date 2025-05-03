@@ -5,14 +5,26 @@ const AppError = require('../utils/appError');
 exports.validateLogin = [
   // Accept either email OR employee_id
   body('email')
-    .if(body('employee_id').not().exists())
-    .isEmail()
-    .withMessage('Please provide a valid email (or use employee_id)'),
-  body('employee_id')
-    .if(body('email').not().exists())
+  .if(body('employee_id').not().exists())
+  .isEmail()
+  .withMessage('Please provide a valid email address')
+  .normalizeEmail(),
+  
+body('employee_id')
+  .if(body('email').not().exists())
+  .trim()
+  .notEmpty()
+  .withMessage('Employee ID cannot be empty')
+  .isLength({ min: 6, max: 12 })
+  .withMessage('Employee ID must be 6-12 characters')
+  .matches(/^[A-Z0-9]+$/)
+  .withMessage('Employee ID must contain only uppercase letters and numbers'),
+  body('password')
+    .trim()
     .notEmpty()
-    .withMessage('Please provide employee_id (or use email)'),
-  body('password').notEmpty().withMessage('Password is required'),
+    .withMessage('Password is required')
+    .isLength({ min: 8 })
+    .withMessage('Password must be at least 8 characters'),
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {

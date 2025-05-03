@@ -11,78 +11,80 @@ const signToken = id => {
 };
 
 exports.login = async (req, res) => {
-    try {
-      // Start timing
-      const startTime = Date.now();
-      
-      // Validate inputs
-      const { employee_id, password } = req.body;
-      if (!employee_id || !password) {
-        console.log('Validation failed - missing fields');
-        return res.status(400).json({
-          status: 'fail',
-          message: 'Please provide employee ID and password'
-        });
-      }
-  
-      // Optimized database query with lean() and select()
-      const user = await User.findOne({ employee_id })
-        .select('+password +role +name')
-        .lean()
-        .maxTimeMS(2000); // Timeout after 2 seconds
-  
-      if (!user) {
-        console.log(`User not found: ${employee_id}`);
-        return res.status(401).json({
-          status: 'fail',
-          message: 'Invalid credentials'
-        });
-      }
-  
-      // Password comparison with timeout
-      const isMatch = await Promise.race([
-        (password.trim() === user.password),
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Comparison timeout')), 1000)
-        )
-      ]);
-  
-      if (!isMatch) {
-        console.log('Password mismatch');
-        return res.status(401).json({
-          status: 'fail',
-          message: 'Invalid credentials'
-        });
-      }
-  
-      // Generate token
-      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-        expiresIn: process.env.JWT_EXPIRES_IN
-      });
-  
-      // Log performance
-      console.log(`Login processed in ${Date.now() - startTime}ms`);
-  
-      res.status(200).json({
-        status: 'success',
-        token,
-        user: {
-          id: user._id,
-          name: user.name,
-          role: user.role,
-          employee_id: user.employee_id
-        }
-      });
-  
-    } catch (err) {
-      console.error('Login error:', err.message);
-      res.status(500).json({
-        status: 'error',
-        message: 'Login processing failed',
-        error: err.message
+  try {
+    const { employee_id, password } = req.body;
+
+    if(!password) {
+      return res.status(400).json({
+        status:'fail',
+        message:'Password is required'
       });
     }
-  };
+
+    // 1. Find user (include password field)
+    const user = await User.findOne({ employee_id }).select('+password');
+
+    if (!user) {
+      console.log(`User not found: ${employee_id}`);
+      return res.status(403).json({
+        status: 'fail',
+        message: 'Invalid credentials'
+      });
+    }
+
+    if (!user.password || !password) {
+      return res.status(400).json({
+        status: 'fail',
+        message: 'Invalid login request'
+      });
+    }
+    
+
+    // 2. Verify password using bcrypt
+    const isMatch = await bcrypt.compare(password, user.password);
+    
+    console.log('Comparing:', {
+      input: password,
+      stored: user.password,
+      match: await bcrypt.compare(password, user.password)
+    });
+
+    if (!isMatch) {
+      console.log('Password mismatch for user:', employee_id);
+      return res.status(403).json({
+        status: 'fail',
+        message: 'Invalid credentials'
+      });
+    }
+
+    // 3. Generate JWT token
+    const token = jwt.sign(
+      { id: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: '24h' }
+    );
+
+    res.status(200).json({
+      message: 'Login successful',
+      status: 'success',
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        role: user.role,
+        employee_id: user.employee_id
+      }
+    });
+
+
+  } catch (err) {
+    console.error('Login error:', err);
+    res.status(500).json({
+      status: 'error',
+      message: 'Login processing failed'
+    });
+  }
+};
   
   
   exports.register = catchAsync(async (req, res, next) => {

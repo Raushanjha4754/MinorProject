@@ -32,14 +32,14 @@ const login = async (identifier, password, role) => {
     // Show loading state immediately
     setLoading(true); 
 
-    const startTime = Date.now();
-    const { token, user } = await api.login(identifier, password, role);
-    
-    console.log(`Login completed in ${Date.now() - startTime}ms`);
-    
-    localStorage.setItem('token', token);
-    setUser(user);
-    return user;
+    const { data } = await api.post('/auth/login', {
+      employee_id: identifier,
+      password,
+      role
+    });
+    localStorage.setItem('token', data.token);
+    setUser(data.user);
+    return data.user;
 
   } catch (err) {
     console.error('Auth Context Error:', {

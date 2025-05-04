@@ -18,13 +18,13 @@ The Hostel and Mess Management System is a web-based application designed to str
 ## 👨‍💻Developed By
 Minor Project Team -**B.Tech, Instrumentation and Control Engineering
 National Institute of Technology (NIT), Jalandhar**
-- Raushan Jha
-- Monib Singha
-- Bhaskar Kumar
+- [Raushan Jha](https://github.com/Raushanjha4754)
+- [Monib Singha](https://github.com/Monib007)
+- [Bhaskar Kumar](https://github.com/Dharya250974)
 ## 🧑‍🏫Guided By
  Minor Project Supervisor
-  ## Dr. Dilbag Singh,
-    Professor
+  ## Dr. Dilbag Singh
+    Professor,
     Department of Instrumentation and Control Engineering
     National Institute of Technology, Jalandhar
 

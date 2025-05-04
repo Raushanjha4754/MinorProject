@@ -1,7 +1,7 @@
 
 const mongoose = require('mongoose');
 const User = require('./models/User');
-const Hostel = require('./models/Hostel');
+// const Hostel = require('./models/Hostel');
 const dotenv = require('dotenv');
 const bcrypt = require('bcryptjs');
 
@@ -9,10 +9,7 @@ dotenv.config({ path: './.env' });
 
 mongoose.set('strictQuery', false);
 
-const MONGODB_URI = process.env.MONGODB_URI.replace(
-  '<db_password>',
-  process.env.DB_PASSWORD
-);
+const MONGODB_URI = process.env.MONGODB_URI;
 
 const seedDB = async () => {
     try {
@@ -27,7 +24,7 @@ const seedDB = async () => {
         {
           name: 'Hostel Administrator',
           email: 'hostel.admin@nitj.ac.in',
-          employee_id: 'NITJADMIN001',
+          employee_id: '12345678',
           password: 'Secure@Admin123', 
           role: 'admin',
           contactNumber: '9876543201'

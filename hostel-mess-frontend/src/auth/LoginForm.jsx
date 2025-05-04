@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { login as apiLogin } from '../api/index';
+
 import { 
   Box, 
   Typography, 
@@ -40,9 +40,9 @@ const LoginForm = () => {
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
+  // const location = useLocation();
 
-  const from = location.state?.from?.pathname || (formData.role === 'admin' ? '/admin/dashboard' : '/');
+  // const from = location.state?.from?.pathname || (formData.role === 'admin' ? '/admin/dashboard' : '/');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -99,17 +99,17 @@ const LoginForm = () => {
     
     try {
       setLoading(true);
-      await login(
-        formData.identifier,
-        formData.password,
-        formData.role
-      );
-      navigate(from, { replace: true });
+      await login(formData.identifier, formData.password, formData.role);
+      
+      // Redirect based on role
+      const redirectPath = formData.role === 'admin' 
+        ? '/admin/dashboard' 
+        : '/student/dashboard';
+      
+      navigate(redirectPath, { replace: true });
+      
     } catch (err) {
-      setError(
-        err.response?.data?.message || 
-        'Login failed. Please check your credentials and try again.'
-      );
+      setError(err.message || 'Login failed. Please check your credentials.');
     } finally {
       setLoading(false);
     }

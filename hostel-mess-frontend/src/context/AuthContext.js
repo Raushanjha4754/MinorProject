@@ -1,18 +1,20 @@
+// src/context/AuthContext.js
 import { createContext, useContext, useState, useEffect } from 'react';
-import api from '../api';
+import api from '../api'; // Import the main api instance
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     const loadUser = async () => {
       try {
         const token = localStorage.getItem('token');
         if (token) {
-          const { data } = await api.getMe();
-          setUser(data.user);
+          const userData = await api.getMe();
+          setUser(userData.user);
         }
       } catch (err) {
         logout();
@@ -22,47 +24,42 @@ export const AuthProvider = ({ children }) => {
     };
     loadUser();
   }, []);
-const login = async (identifier, password, role) => {
-  try {
-    // Show loading state immediately
-    setLoading(true); 
 
-    const { data } = await api.post('/auth/login', {
-      employee_id: identifier,
-      password,
-      role
-    });
-    localStorage.setItem('token', data.token);
-    setUser(data.user);
-    return data.user;
-
-  } catch (err) {
-    console.error('Auth Context Error:', {
-      error: err,
-      time: new Date().toISOString()
-    });
-    
-    // Specific error messages
-    let message = err.message;
-    if (message.includes('timeout')) {
-      message = 'Server is taking too long to respond. Please try again later.';
-    } else if (message.includes('credentials')) {
-      message = 'Invalid employee ID or password';
+  const login = async (identifier, password, role) => {
+    try {
+      setLoading(true);
+      const response = await api.login(identifier, password, role);
+      
+      console.log('Raw login response:', response); // Debug log
+      
+      // Handle case where response is the direct data (no .data property)
+      const responseData = response.data || response;
+      
+      if (!responseData || !responseData.token) {
+        throw new Error('Login failed: invalid response format');
+      }
+  
+      const { token, user } = responseData;
+      
+      localStorage.setItem('token', token);
+      localStorage.setItem('userRole', user.role);
+      setUser(user);
+      return user;
+  
+    } catch (err) {
+      console.error('Login error:', err);
+      throw err;
+    } finally {
+      setLoading(false);
     }
+  };
+  
 
-    throw new Error(message);
-  } finally {
-    setLoading(false);
-  }
-};
-
-  // Logout function
   const logout = () => {
     localStorage.removeItem('token');
     setUser(null);
   };
 
-  // Context value
   const value = {
     user,
     loading,

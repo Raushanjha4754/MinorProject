@@ -3,9 +3,10 @@ import axios from 'axios';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
+
 const api = axios.create({
   baseURL: API_BASE_URL,
-  withCredentials: true,
+  withCredentials: true, // Keep this for cookies/sessions
   headers: {
     'Content-Type': 'application/json',
   }
@@ -23,62 +24,51 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+
 // Response interceptor
 api.interceptors.response.use(
-  (response) => response.data,
+  (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem('token');
-      window.location.href = '/login';
-    }
-    
-    // Format consistent error response
-    const errorMessage = error.response?.data?.message || 
-                        error.message || 
-                        'An error occurred';
-    
-    return Promise.reject(errorMessage);
+    const errorMessage = error.response?.data?.message || error.message || 'An error occurred';
+    console.error('API Error:', {
+      status: error.response?.status || 'No response',
+      data: error.response?.data || 'No response data'
+    });
+    return Promise.reject(new Error(errorMessage));
   }
 );
 
+
+
 // Auth endpoints
+
 export const login = async (identifier, password, role) => {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
-  
-    try {
-      const payload = {
-        employee_id: identifier.trim(),
-        password: password.trim(),
-        role: role.trim()
-      };
-  
-      const response = await api.post('/auth/login', { 
-        employee_id: identifier,
-        password,
-        role 
-      });
-      return response.data;
-  
-    } catch (error) {
-      clearTimeout(timeoutId);
-      let errorMessage = 'Login failed';
-      
-      if (error.code === 'ECONNABORTED') {
-        errorMessage = 'Request timeout - server is not responding';
-      } else if (error.response) {
-        errorMessage = error.response.data.message || errorMessage;
-      }
-  
-      console.error('Login API Error:', {
-        error: error.message,
-        status: error.response?.status,
-        data: error.response?.data
-      });
-  
-      throw new Error(errorMessage);
+  try {
+    const response = await api.post('/login', {
+      employee_id: identifier,
+      password,
+      role
+    });
+
+    if (!response.data?.token || !response.data?.user) {
+      console.error('Invalid server response structure:', response.data);
+      throw new Error('Invalid server response format');
     }
-  };
+
+    return response.data;
+    
+  } catch (error) {
+    // Improved error handling
+    const errorMessage = error.response?.data?.message || 
+                        error.message || 
+                        'Login failed';
+    console.error('API Login Error:', {
+      status: error.response?.status,
+      data: error.response?.data
+    });
+    throw new Error(errorMessage);
+  }
+};
   
 export const getMe = () => api.get('/auth/me');
 export const logout = () => {
@@ -143,13 +133,27 @@ api.interceptors.request.use(config => {
     return config;
   });
   
-  api.interceptors.response.use(response => {
-    console.log('Response:', response.status, response.data);
-    return response;
-  }, error => {
-    console.error('API Error:', error.response?.status, error.response?.data);
-    return Promise.reject(error);
-  });
+// Response interceptor
+api.interceptors.response.use(
+  (response) => {
+    // Ensure we always return the data in consistent format
+    return {
+      data: response.data,
+      status: response.status,
+      headers: response.headers
+    };
+  },
+  (error) => {
+    const errorMessage = error.response?.data?.message || 
+                       error.message || 
+                       'An error occurred';
+    console.error('API Error:', {
+      status: error.response?.status,
+      data: error.response?.data
+    });
+    return Promise.reject(new Error(errorMessage));
+  }
+);
 
 export default {
   login,

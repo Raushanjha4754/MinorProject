@@ -20,7 +20,7 @@ Minor Project Team -**B.Tech, Instrumentation and Control Engineering
 National Institute of Technology (NIT), Jalandhar**
 - [Raushan Jha](https://github.com/Raushanjha4754)
 - [Monib Singha](https://github.com/Monib007)
-- [Bhaskar Kumar](https://github.com/Dharya250974)
+- [Bhaskar Kumar](https://github.com/Dhairya250974)
 ## 🧑‍🏫Guided By
  Minor Project Supervisor
   ## Dr. Dilbag Singh

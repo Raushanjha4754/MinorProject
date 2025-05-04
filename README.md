@@ -15,3 +15,9 @@ The Hostel and Mess Management System is a web-based application designed to str
 - 📊 Monitor mess attendance and generate bills
 - 📥 View and manage complaints and feedback
 - 📈 Dashboard with overall hostel statistics
+## 👨‍💻Developed By
+Minor Project Team -**B.Tech, Instrumentation and Control Engineering
+National Institute of Technology (NIT), Jalandhar**
+- 🎓Raushan Jha
+- 🎓Monib Singha
+- 🎓Bhaskar Kumar

@@ -19,8 +19,8 @@ import AttendanceManagement from './admin/AttendanceManagement';
 import FeeManagement from './admin/FeeManagement';
 import MessManagement from './admin/MessManagement';
 import Settings from './admin/Settings';
-import { NotFound } from './components/NotFound';
-import { LoadingScreen } from './components/LoadingScreen';
+// import { NotFound } from './components/NotFound';
+// import { LoadingScreen } from './components/LoadingScreen';
 
 const theme = createTheme({
   palette: {
@@ -55,17 +55,40 @@ function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <AuthProvider>
-        
+      {/* <BrowserRouter> */}
           <Routes>
+            {/* ADMIN */}
+            <Route path="/admin" element={<AdminLayout/>}>
+              <Route index element={<AdminDashboard />} />
+              <Route path="manage-students" element={<StudentManagement />} />
+              <Route path="manage-attendance" element={<AttendanceManagement />} />
+              <Route path="manage-fees" element={<FeeManagement />} />
+              <Route path="mess-management" element={<MessManagement />} />
+              <Route path="settings" element={<Settings />} />
+            </Route>
+
+            {/* STUDENT */}
+            <Route path="/student" element={<StudentLayout />}>
+              <Route index element={<StudentDashboard />} />
+              <Route path="fee-payment" element={<FeePayment />} />
+              <Route path="attendance" element={<AttendanceView />} />
+              <Route path="mess-menu" element={<MessMenu />} />
+              <Route path="mess-billing" element={<MessBilling />} />
+              <Route path="submit-complaint" element={<ComplaintForm />} />
+              <Route path="complaints" element={<ComplaintList />} />
+            </Route>
+
+
             {/* Public Routes */}
             <Route element={<PublicRoute />}>
+            <Route path="/admin" element={<AdminLayout/>}></Route>
               <Route path="/login" element={<LoginForm />} />
               <Route path="/" element={<Navigate to="/login" replace />} />
             </Route>
 
             {/* Protected Student Routes */}
             <Route element={<ProtectedRoute allowedRoles={['student']} />}>
-              <Route path="/student" element={<StudentLayout />}>
+              {/* <Route path="/student" element={<StudentLayout />}>
                 <Route index element={<StudentDashboard />} />
                 <Route path="fee-payment" element={<FeePayment />} />
                 <Route path="attendance" element={<AttendanceView />} />
@@ -73,12 +96,12 @@ function App() {
                 <Route path="mess-billing" element={<MessBilling />} />
                 <Route path="submit-complaint" element={<ComplaintForm />} />
                 <Route path="complaints" element={<ComplaintList />} />
-              </Route>
+              </Route> */}
             </Route>
 
             {/* Protected Admin Routes */}
-            <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
-              <Route path="/admin" element={<AdminLayout />}>
+            {/* <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
+              <Route path="/admin" element={<AdminLayout/>}>
                 <Route index element={<AdminDashboard />} />
                 <Route path="manage-students" element={<StudentManagement />} />
                 <Route path="manage-attendance" element={<AttendanceManagement />} />
@@ -86,12 +109,12 @@ function App() {
                 <Route path="mess-management" element={<MessManagement />} />
                 <Route path="settings" element={<Settings />} />
               </Route>
-            </Route>
+            </Route> */}
 
             {/* Redirect to login if no matching route */}
             <Route path="*" element={<Navigate to="/login" replace />} />
           </Routes>
-        
+          {/* </BrowserRouter> */}
       </AuthProvider>
     </ThemeProvider>
   );

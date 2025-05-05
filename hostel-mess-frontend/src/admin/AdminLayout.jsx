@@ -1,5 +1,5 @@
 import React from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { 
   Box, 
   CssBaseline, 
@@ -15,7 +15,8 @@ import {
   useTheme,
   AppBar,
   Avatar,
-  IconButton
+  IconButton,
+  useMediaQuery
 } from '@mui/material';
 import {
   Dashboard as DashboardIcon,
@@ -33,18 +34,25 @@ import { useNavigate } from 'react-router-dom';
 const drawerWidth = 240;
 
 const AdminLayout = () => {
+  
   const theme = useTheme();
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/login', { replace: true });
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
   };
 
   const adminMenuItems = [
@@ -57,7 +65,7 @@ const AdminLayout = () => {
   ];
 
   const drawer = (
-    <Box sx={{ overflow: 'auto' }}>
+    <Box sx={{ overflow: 'auto', height: '100%', display: 'flex', flexDirection: 'column' }}>
       {/* Admin Profile Section */}
       <Box sx={{ p: 2, textAlign: 'center' }}>
         <Avatar
@@ -79,14 +87,37 @@ const AdminLayout = () => {
       <Divider />
 
       {/* Menu Items */}
-      <List>
+      <List sx={{ flexGrow: 1 }}>
         {adminMenuItems.map((item) => (
           <ListItem key={item.text} disablePadding>
-            <ListItemButton onClick={() => navigate(item.path)}>
-              <ListItemIcon sx={{ color: theme.palette.primary.main }}>
+            <ListItemButton 
+              onClick={() => {
+                navigate(item.path);
+                if (isMobile) setMobileOpen(false);
+              }}
+              selected={location.pathname === item.path}
+              sx={{
+                '&.Mui-selected': {
+                  backgroundColor: theme.palette.action.selected,
+                  '&:hover': {
+                    backgroundColor: theme.palette.action.selected,
+                  }
+                }
+              }}
+            >
+              <ListItemIcon sx={{ 
+                color: location.pathname === item.path 
+                  ? theme.palette.primary.main 
+                  : theme.palette.text.secondary
+              }}>
                 {item.icon}
               </ListItemIcon>
-              <ListItemText primary={item.text} />
+              <ListItemText 
+                primary={item.text} 
+                primaryTypographyProps={{
+                  fontWeight: location.pathname === item.path ? 'bold' : 'normal'
+                }}
+              />
             </ListItemButton>
           </ListItem>
         ))}
@@ -107,6 +138,13 @@ const AdminLayout = () => {
     </Box>
   );
 
+  // Redirect to login if not admin
+  if (user?.role !== 'admin') {
+    return null; // Or return <Navigate to="/login" replace /> if preferred
+  }
+
+  
+
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
@@ -117,6 +155,7 @@ const AdminLayout = () => {
         sx={{
           width: { sm: `calc(100% - ${drawerWidth}px)` },
           ml: { sm: `${drawerWidth}px` },
+          zIndex: theme.zIndex.drawer + 1
         }}
       >
         <Toolbar>
@@ -128,8 +167,11 @@ const AdminLayout = () => {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            Hostel Mess Management - Admin
+          <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
+            Hostel Mess Management System
+          </Typography>
+          <Typography variant="subtitle1" sx={{ display: { xs: 'none', sm: 'block' } }}>
+            {user?.name || 'Admin'}
           </Typography>
         </Toolbar>
       </AppBar>
@@ -138,6 +180,7 @@ const AdminLayout = () => {
       <Box
         component="nav"
         sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+        aria-label="admin navigation"
       >
         <Drawer
           variant="temporary"
@@ -146,7 +189,10 @@ const AdminLayout = () => {
           ModalProps={{ keepMounted: true }}
           sx={{
             display: { xs: 'block', sm: 'none' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+            '& .MuiDrawer-paper': { 
+              boxSizing: 'border-box', 
+              width: drawerWidth 
+            },
           }}
         >
           {drawer}
@@ -155,7 +201,10 @@ const AdminLayout = () => {
           variant="permanent"
           sx={{
             display: { xs: 'none', sm: 'block' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+            '& .MuiDrawer-paper': { 
+              boxSizing: 'border-box', 
+              width: drawerWidth 
+            },
           }}
           open
         >
@@ -170,7 +219,8 @@ const AdminLayout = () => {
           flexGrow: 1, 
           p: 3, 
           width: { sm: `calc(100% - ${drawerWidth}px)` },
-          mt: 8 
+          minHeight: '100vh',
+          backgroundColor: theme.palette.background.default
         }}
       >
         <Toolbar /> 

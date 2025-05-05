@@ -59,7 +59,10 @@ exports.login = async (req, res) => {
 
     // 3. Generate JWT token after verifying password
     const token = jwt.sign(
-      { id: user._id },
+      { 
+        id: user._id,
+        role: user.role
+       },
       process.env.JWT_SECRET,
       { expiresIn: '24h' }
     );
@@ -72,7 +75,8 @@ exports.login = async (req, res) => {
         id: user._id,
         name: user.name,
         role: user.role,
-        employee_id: user.employee_id
+        employee_id: user.employee_id,
+        token:token,
       }
     });
 
@@ -120,6 +124,10 @@ exports.protect = catchAsync(async (req, res, next) => {
     token = req.headers.authorization.split(' ')[1];
   }
 
+  console.log(req)
+  console.log("................")
+  console.log(req.headers)
+
   if (!token) {
     return next(new AppError('You are not logged in!', 401));
   }
@@ -144,10 +152,31 @@ exports.restrictTo = (...roles) => {
   };
 };
 
-exports.getMe = (req, res, next) => {
-  req.params.id = req.user.id;
-  next();
-};
+exports.getMe = catchAsync(async (req, res) => {
+  // Debug logging
+  console.log('Headers received:', req.headers);
+  console.log('Token received:', req.headers.authorization);
+
+  const userId =  req.user.id;
+  console.log(userId)
+
+  const user = await User.findById(req.user.id);
+  if (!user) {
+    throw new AppError('User not found', 404);
+  }
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      user: {
+        id: user._id,
+        name: user.name,
+        role: user.role,
+        employee_id: user.employee_id
+      }
+    }
+  });
+});
 
 exports.createAdmin = catchAsync(async (req, res, next) => {
   const { name, email, employee_id, password, passwordConfirm } = req.body;

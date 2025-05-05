@@ -40,7 +40,7 @@ const LoginForm = () => {
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
-  // const location = useLocation();
+  const location = useLocation();
 
   // const from = location.state?.from?.pathname || (formData.role === 'admin' ? '/admin/dashboard' : '/');
 
@@ -99,14 +99,20 @@ const LoginForm = () => {
     
     try {
       setLoading(true);
-      await login(formData.identifier, formData.password, formData.role);
+      const response = await login(formData.identifier, formData.password, formData.role);
+      console.log("response : ",response.token)
+
+      localStorage.setItem("token",`Bearer ${response.token}`)
+      console.log("saved token............")
+      console.log(localStorage.getItem("token"));
       
       // Redirect based on role
       const redirectPath = formData.role === 'admin' 
-        ? '/admin/dashboard' 
-        : '/student/dashboard';
+        ? '/admin' 
+        : '/student';
       
       navigate(redirectPath, { replace: true });
+      // navigate("/student")
       
     } catch (err) {
       setError(err.message || 'Login failed. Please check your credentials.');

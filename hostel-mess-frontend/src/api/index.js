@@ -50,27 +50,30 @@ export const login = async (identifier, password, role) => {
       role
     });
 
-    if (!response.data?.token || !response.data?.user) {
-      console.error('Invalid server response structure:', response.data);
-      throw new Error('Invalid server response format');
+    localStorage.setItem('token', response.data.token);
+    localStorage.setItem('user', JSON.stringify(response.data.user));
+
+    // Ensure consistent response format
+    if (!response.data) {
+      throw new Error('Invalid server response');
     }
 
-    return response.data;
+    return {
+      token: response.data.token,
+      user: response.data.user
+    };
     
   } catch (error) {
-    // Improved error handling
-    const errorMessage = error.response?.data?.message || 
-                        error.message || 
-                        'Login failed';
     console.error('API Login Error:', {
       status: error.response?.status,
       data: error.response?.data
     });
-    throw new Error(errorMessage);
+    throw new Error(error.response?.data?.message || 'Login failed');
   }
 };
   
-export const getMe = () => api.get('/auth/me');
+export const getMe = () => api.get('/me');
+
 export const logout = () => {
   localStorage.removeItem('token');
   return api.post('/auth/logout');

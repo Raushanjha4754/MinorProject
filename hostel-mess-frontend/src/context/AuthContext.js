@@ -1,6 +1,7 @@
 // src/context/AuthContext.js
 import { createContext, useContext, useState, useEffect } from 'react';
-import api from '../api'; // Import the main api instance
+import api from '../api'; 
+
 
 const AuthContext = createContext();
 
@@ -37,23 +38,7 @@ export const AuthProvider = ({ children }) => {
 
 // src/context/AuthContext.js
 const login = async (identifier, password, role) => {
-  // try {
-  //   setLoading(true);
-  //   const response = await api.login(identifier, password, role);
-    
-  //   // Handle response format consistently
-  //   const responseData = response.data || response;
-    
-  //   if (!responseData.token || !responseData.user) {
-  //     throw new Error('Invalid server response format');
-  //   }
-
-  //   localStorage.setItem('token', responseData.token);
-  //   localStorage.setItem('userRole', responseData.user.role);
-  //   setUser(responseData.user);
-    
-  //   return responseData.user;
-  // } 
+  
   try {
     setLoading(true);
     const { token, user } = await api.login(identifier, password, role);

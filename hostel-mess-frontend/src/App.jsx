@@ -19,6 +19,8 @@ import AttendanceManagement from './admin/AttendanceManagement';
 import FeeManagement from './admin/FeeManagement';
 import MessManagement from './admin/MessManagement';
 import Settings from './admin/Settings';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 // import { NotFound } from './components/NotFound';
 // import { LoadingScreen } from './components/LoadingScreen';
 
@@ -54,6 +56,7 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
+      <LocalizationProvider dateAdapter={AdapterDateFns}>
       <AuthProvider>
       {/* <BrowserRouter> */}
           <Routes>
@@ -81,10 +84,9 @@ function App() {
 
             {/* Public Routes */}
             <Route element={<PublicRoute />}>
-            <Route path="/admin" element={<AdminLayout/>}></Route>
-              <Route path="/login" element={<LoginForm />} />
-              <Route path="/" element={<Navigate to="/login" replace />} />
-            </Route>
+            <Route path="/login" element={<LoginForm />} />
+            <Route path="/" element={<Navigate to="/login" replace />} />
+          </Route>
 
             {/* Protected Student Routes */}
             <Route element={<ProtectedRoute allowedRoles={['student']} />}>
@@ -116,6 +118,7 @@ function App() {
           </Routes>
           {/* </BrowserRouter> */}
       </AuthProvider>
+      </LocalizationProvider>
     </ThemeProvider>
   );
 }

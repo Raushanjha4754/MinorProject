@@ -35,6 +35,11 @@ if (config.env === 'development') {
   app.use(morgan('dev'));
 }
 
+app.use((req, res, next) => {
+  console.log(`Incoming ${req.method} request to ${req.originalUrl}`);
+  next();
+});
+
 // Database connection
 mongoose.connect(config.mongodb.uri, config.mongodb.options)
   .then(() => console.log('Connected to MongoDB!'))

@@ -1,114 +1,142 @@
 // src/context/AuthContext.js
-import { createContext, useContext, useState, useEffect } from 'react';
-import api from '../api'; 
-
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { login as apiLogin, register as apiRegister } from '../api/index';
 
 const AuthContext = createContext();
 
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [token, setToken] = useState(localStorage.getItem('token'));
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const loadUser = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        if (token) {
-          const response = await api.getMe();
-          
-          // Handle both response formats:
-          const userData = response.user || response;  // This is the critical fix
-          
-          if (!userData?.role) {
-            throw new Error('Invalid user data format');
-          }
-          
-          setUser(userData);
-          localStorage.setItem('userRole', userData.role);
+    // Check if user is logged in on app start
+    const initializeAuth = async () => {
+      const storedToken = localStorage.getItem('token');
+      const storedUser = localStorage.getItem('user');
+      
+      if (storedToken && storedUser) {
+        try {
+          setToken(storedToken);
+          setUser(JSON.parse(storedUser));
+        } catch (error) {
+          console.error('Error parsing stored user data:', error);
+          logout();
         }
-      } catch (err) {
-        console.error('Auth load error:', err);
-        logout();
-      } finally {
-        setLoading(false);
       }
+      setLoading(false);
     };
-    loadUser();
+
+    initializeAuth();
   }, []);
 
-// src/context/AuthContext.js
-const login = async (identifier, password, role) => {
-  
-  try {
-    setLoading(true);
-    const { token, user } = await api.login(identifier, password, role);
-    
-    // Store auth data
-    localStorage.setItem('token', token);
-    localStorage.setItem('user', JSON.stringify(user));
-    
-    // Set user state
-    setUser(user);
-    return user;
-    
-  }
-  catch (err) {
-    console.error('Login error:', err);
-    // Clear any partial auth state on error
-    localStorage.removeItem('token');
-    // localStorage.removeItem('userRole');
-    localStorage.removeItem('user');
-    setUser(null);
-    throw err;
-  } finally {
-    setLoading(false);
-  }
-};
+  const login = async (identifier, password, role = 'student') => {
+    try {
+      const response = await apiLogin(identifier, password, role);
+      
+      if (response.token) {
+        const userData = {
+          id: response.user.id,
+          name: response.user.name,
+          email: response.user.email,
+          role: response.user.role || role,
+          rollNumber: response.user.rollNumber,
+          employeeId: response.user.employeeId,
+          profileImage: response.user.profileImage,
+        };
 
-// Update loadUser in useEffect
-const loadUser = async () => {
-  try {
-    const token = localStorage.getItem('token');
-    if (!token) return;
-
-    console.log('Attempting to load user with token:', token); // Debug
-    
-    const response = await api.getMe();
-    console.log('User data response:', response); // Debug
-
-    if (!response.data) {
-      throw new Error('Invalid user data format');
+        setUser(userData);
+        setToken(`Bearer ${response.token}`);
+        
+        localStorage.setItem('token', `Bearer ${response.token}`);
+        localStorage.setItem('user', JSON.stringify(userData));
+        
+        return response;
+      } else {
+        throw new Error('Login failed - no token received');
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      throw error;
     }
+  };
 
-    setUser(response.data);
-  } catch (err) {
-    console.error('Auth load error:', err);
-    logout();
-  } finally {
-    setLoading(false);
-  }
-};
-  
+  const register = async (userData, role = 'student') => {
+    try {
+      const response = await apiRegister(userData, role);
+      
+      if (response.token) {
+        const newUser = {
+          id: response.user.id,
+          name: response.user.name,
+          email: response.user.email,
+          role: response.user.role || role,
+          rollNumber: response.user.rollNumber,
+          employeeId: response.user.employeeId,
+          profileImage: response.user.profileImage,
+        };
+
+        setUser(newUser);
+        setToken(`Bearer ${response.token}`);
+        
+        localStorage.setItem('token', `Bearer ${response.token}`);
+        localStorage.setItem('user', JSON.stringify(newUser));
+        
+        return response;
+      } else {
+        throw new Error('Registration failed - no token received');
+      }
+    } catch (error) {
+      console.error('Registration error:', error);
+      throw error;
+    }
+  };
 
   const logout = () => {
-    localStorage.removeItem('token');
     setUser(null);
+    setToken(null);
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    localStorage.removeItem('preferredRole');
+  };
+
+  const updateUser = (updatedUserData) => {
+    const newUserData = { ...user, ...updatedUserData };
+    setUser(newUserData);
+    localStorage.setItem('user', JSON.stringify(newUserData));
+  };
+
+  const isAuthenticated = () => {
+    return !!token && !!user;
+  };
+
+  const hasRole = (requiredRole) => {
+    return user && user.role === requiredRole;
   };
 
   const value = {
     user,
+    token,
     loading,
     login,
+    register,
     logout,
-    isAuthenticated: !!user,
-    isAdmin: user?.role === 'admin'
+    updateUser,
+    isAuthenticated,
+    hasRole,
   };
 
   return (
     <AuthContext.Provider value={value}>
-      {!loading && children}
+      {children}
     </AuthContext.Provider>
   );
 };
-
-export const useAuth = () => useContext(AuthContext);

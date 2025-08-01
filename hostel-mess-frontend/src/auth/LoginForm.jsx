@@ -296,26 +296,16 @@ const LoginForm = () => {
 
             <Box sx={{ textAlign: 'center' }}>
               <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                Access different portals
+                Need an admin account?
               </Typography>
-              <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center' }}>
-                <Button
-                  variant="outlined"
-                  startIcon={<SchoolIcon />}
-                  size="small"
-                  sx={{ borderRadius: 2 }}
-                >
-                  Student Portal
-                </Button>
-                <Button
-                  variant="outlined"
-                  startIcon={<AdminIcon />}
-                  size="small"
-                  sx={{ borderRadius: 2 }}
-                >
-                  Admin Portal
-                </Button>
-              </Box>
+              <Button
+                variant="outlined"
+                startIcon={<AdminIcon />}
+                onClick={() => navigate('/admin/register')}
+                sx={{ borderRadius: 2 }}
+              >
+                Register as Admin
+              </Button>
             </Box>
           </Box>
         </Paper>

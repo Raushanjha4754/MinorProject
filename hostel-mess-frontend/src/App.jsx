@@ -20,6 +20,7 @@ import AttendanceManagement from './admin/AttendanceManagement';
 import FeeManagement from './admin/FeeManagement';
 import MessManagement from './admin/MessManagement';
 import Settings from './admin/Settings';
+import AdminRegisterForm from './auth/AdminRegisterForm';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
@@ -34,6 +35,7 @@ function App() {
               {/* Public Routes */}
               <Route element={<PublicRoute />}>
                 <Route path="/login" element={<LoginForm />} />
+                <Route path="/admin/register" element={<AdminRegisterForm />} />
                 <Route path="/" element={<Navigate to="/login" replace />} />
               </Route>
 

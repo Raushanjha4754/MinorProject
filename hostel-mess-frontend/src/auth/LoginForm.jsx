@@ -1,25 +1,22 @@
 // src/auth/LoginForm.jsx
 import React, { useState } from 'react';
-import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
-import { 
-  Box, 
-  Typography, 
-  TextField, 
-  Button, 
-  Paper, 
-  Avatar, 
+import {
+  Box,
+  Typography,
+  TextField,
+  Button,
+  Paper,
+  Avatar,
   CircularProgress,
   Alert,
   InputAdornment,
   IconButton,
-  Paper,
   Container,
   useTheme,
   useMediaQuery,
-  CircularProgress,
   Divider
 } from '@mui/material';
 import {
@@ -29,42 +26,26 @@ import {
   Person as PersonIcon,
   Lock as LockIcon
 } from '@mui/icons-material';
-import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+
 import Logo from '../assets/logo_nitj.png';
 
 const LoginForm = () => {
   const [formData, setFormData] = useState({
-
     email: '',
-    password: '',
-
     identifier: '',
     password: '',
     showPassword: false,
     role: localStorage.getItem('preferredRole') || 'student'
-
   });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  
+
   const { login } = useAuth();
   const navigate = useNavigate();
-
+  const location = useLocation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-    setError(''); // Clear error when user starts typing
-
-  const location = useLocation();
-
-  // const from = location.state?.from?.pathname || (formData.role === 'admin' ? '/admin/dashboard' : '/');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -81,6 +62,7 @@ const LoginForm = () => {
       ...prev,
       [name]: value
     }));
+    setError('');
   };
 
   const handleRoleChange = (event, newValue) => {
@@ -95,23 +77,20 @@ const LoginForm = () => {
 
   const validateForm = () => {
     if (!formData.identifier.trim()) {
-      setError(formData.role === 'admin' 
-        ? 'Employee ID is required' 
+      setError(formData.role === 'admin'
+        ? 'Employee ID is required'
         : 'Roll Number is required');
       return false;
     }
     if (!/^\d{8}$/.test(formData.identifier)) {
-      setError(`Must be a 8-digit ${formData.role === 'admin' ? 'Employee ID' : 'Roll Number'}`);
+      setError(`Must be an 8-digit ${formData.role === 'admin' ? 'Employee ID' : 'Roll Number'}`);
       return false;
     }
-    
     if (!formData.password) {
       setError('Password is required');
       return false;
     }
-    
     return true;
-
   };
 
   const handleSubmit = async (e) => {
@@ -119,32 +98,18 @@ const LoginForm = () => {
     setLoading(true);
     setError('');
 
-    try {
+    if (!validateForm()) {
+      setLoading(false);
+      return;
+    }
 
-      await login(formData.email, formData.password);
-      // Navigation will be handled by the auth context
+    try {
+      const response = await login(formData.identifier, formData.password, formData.role);
+      localStorage.setItem("token", `Bearer ${response.token}`);
+      const redirectPath = formData.role === 'admin' ? '/admin' : '/student';
+      navigate(redirectPath, { replace: true });
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed. Please try again.');
-
-      setLoading(true);
-      const response = await login(formData.identifier, formData.password, formData.role);
-      console.log("response : ",response.token)
-
-      localStorage.setItem("token",`Bearer ${response.token}`)
-      console.log("saved token............")
-      console.log(localStorage.getItem("token"));
-      
-      // Redirect based on role
-      const redirectPath = formData.role === 'admin' 
-        ? '/admin' 
-        : '/student';
-      
-      navigate(redirectPath, { replace: true });
-      // navigate("/student")
-      
-    } catch (err) {
-      setError(err.message || 'Login failed. Please check your credentials.');
-
     } finally {
       setLoading(false);
     }
@@ -176,7 +141,7 @@ const LoginForm = () => {
             border: '1px solid rgba(255, 255, 255, 0.2)',
           }}
         >
-          {/* Header Section */}
+          {/* Header */}
           <Box
             sx={{
               background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
@@ -205,27 +170,18 @@ const LoginForm = () => {
           </Box>
 
           {/* Login Form */}
-          <CardContent sx={{ p: 4 }}>
+          <Box sx={{ p: 4 }}>
             {error && (
               <Alert severity="error" sx={{ mb: 3, borderRadius: 2 }}>
                 {error}
               </Alert>
             )}
-
             <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
               <TextField
                 fullWidth
-
-                label="Email Address"
-                name="email"
-                type="email"
-                value={formData.email}
-
-                id="identifier"
                 label={formData.role === 'admin' ? 'Employee ID' : 'Roll Number'}
                 name="identifier"
                 value={formData.identifier}
->>>>>>> 04f52ebdd7eed3164829aa0fc1d31b57a6b69e80
                 onChange={handleChange}
                 required
                 variant="outlined"
@@ -238,7 +194,6 @@ const LoginForm = () => {
                   ),
                 }}
               />
-
               <TextField
                 fullWidth
                 label="Password"
@@ -268,7 +223,6 @@ const LoginForm = () => {
                   ),
                 }}
               />
-
               <Button
                 type="submit"
                 fullWidth
@@ -322,7 +276,7 @@ const LoginForm = () => {
                 </Button>
               </Box>
             </Box>
-          </CardContent>
+          </Box>
         </Paper>
 
         {/* Footer */}

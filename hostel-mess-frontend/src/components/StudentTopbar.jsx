@@ -1,4 +1,5 @@
 // src/components/StudentTopbar
+
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -21,6 +22,7 @@ import {
   Settings as SettingsIcon,
   Logout as LogoutIcon
 } from '@mui/icons-material';
+
 import Logo from '../assets/logo_nitj.png';
 const StudentTopbar = () => {
   const { user, logout } = useAuth();
@@ -77,11 +79,11 @@ const StudentTopbar = () => {
             src={Logo}
             alt="NIT Jalandhar Logo"
             sx={{
-            height: { xs: 50, md: 60 },
+              height: { xs: 50, md: 60 },
               width: 'auto'
             }}
           />
-        {!isMobile && (
+          {!isMobile && (
             <Box>
               <Typography
                 variant="h6"
@@ -121,6 +123,7 @@ const StudentTopbar = () => {
             Student Portal
           </Typography>
         )}
+
         {/* Right side - Actions */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, ml: 'auto' }}>
           {/* Notifications */}
@@ -174,6 +177,7 @@ const StudentTopbar = () => {
           </Box>
         </Box>
       </Toolbar>
+
       {/* Notifications Menu */}
       <Menu
         anchorEl={notificationAnchor}
@@ -263,4 +267,5 @@ const StudentTopbar = () => {
     </AppBar>
   );
 };
+
 export default StudentTopbar;

@@ -1,22 +1,24 @@
 // src/features/dashboard/StudentDashboard.jsx
-import React from 'react';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { 
-  Box, 
-  Typography, 
-  Card, 
+import {
+  Box,
+  Typography,
+  Card,
   CardContent,
-  Divider,
+  Grid,
   Avatar,
   Chip,
   useTheme,
   Button,
-  Grid,
   CircularProgress,
   Alert,
-  Skeleton
+  Skeleton,
+  Paper,
+  Divider,
+  IconButton,
+  Tooltip
 } from "@mui/material";
 import {
   Paid as FeesIcon,
@@ -29,34 +31,100 @@ import {
   Email as EmailIcon,
   Cake as DobIcon,
   Favorite as BloodIcon,
-  Refresh as RefreshIcon
+  Refresh as RefreshIcon,
+  TrendingUp as TrendingUpIcon,
+  TrendingDown as TrendingDownIcon,
+  Notifications as NotificationsIcon
 } from "@mui/icons-material";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, LineChart, Line } from "recharts";
 import { getStudentProfile } from '../../api/student';
 import { getAttendanceSummary } from '../../api/attendance';
 import { getFeeSummary } from '../../api/fees';
 import { getMessBalance } from '../../api/mess';
 
+const StatCard = ({ title, value, icon, color, trend, onClick, loading = false }) => {
+  const theme = useTheme();
+  
+  if (loading) {
+    return (
+      <Card sx={{ height: '100%', borderRadius: 3 }}>
+        <CardContent sx={{ p: 3 }}>
+          <Skeleton variant="rectangular" height={40} sx={{ mb: 2 }} />
+          <Skeleton variant="text" width="60%" />
+          <Skeleton variant="text" width="40%" />
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card
+      sx={{
+        height: '100%',
+        borderRadius: 3,
+        cursor: onClick ? 'pointer' : 'default',
+        transition: 'all 0.3s ease',
+        '&:hover': onClick ? {
+          transform: 'translateY(-4px)',
+          boxShadow: theme.shadows[8],
+        } : {},
+      }}
+      onClick={onClick}
+    >
+      <CardContent sx={{ p: 3 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+          <Box
+            sx={{
+              backgroundColor: `${color}15`,
+              color: color,
+              p: 1.5,
+              borderRadius: 2,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            {icon}
+          </Box>
+          {trend && (
+            <Chip
+              icon={trend > 0 ? <TrendingUpIcon /> : <TrendingDownIcon />}
+              label={`${Math.abs(trend)}%`}
+              size="small"
+              color={trend > 0 ? 'success' : 'error'}
+              variant="outlined"
+            />
+          )}
+        </Box>
+        
+        <Typography variant="h4" sx={{ fontWeight: 700, mb: 1, color: theme.palette.text.primary }}>
+          {value}
+        </Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 500 }}>
+          {title}
+        </Typography>
+      </CardContent>
+    </Card>
+  );
+};
+
 const DetailField = ({ label, value, icon, theme }) => (
-  <Box sx={{ 
-    display: 'flex', 
-    alignItems: 'center',
-    mb: 2,
-    gap: 1
-  }}>
+  <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, gap: 1 }}>
     {icon && React.cloneElement(icon, { 
       fontSize: 'small', 
-      color: 'action.active' 
+      color: 'action.active',
+      sx: { opacity: 0.7 }
     })}
-    <Box>
-      <Typography variant="subtitle2" sx={{ 
-        fontWeight: 'bold', 
+    <Box sx={{ flex: 1 }}>
+      <Typography variant="caption" sx={{ 
+        fontWeight: 600, 
         color: theme.palette.text.secondary,
-        lineHeight: 1.2
+        textTransform: 'uppercase',
+        letterSpacing: '0.5px'
       }}>
-        {label}:
+        {label}
       </Typography>
-      <Typography variant="body1" sx={{ pl: 0.5 }}>
+      <Typography variant="body2" sx={{ fontWeight: 500, mt: 0.5 }}>
         {value || 'N/A'}
       </Typography>
     </Box>
@@ -92,22 +160,25 @@ const StudentDashboard = () => {
           title: "Pending Fees", 
           value: `₹${(fees.data?.pending || fees.pending).toLocaleString()}`, 
           icon: <FeesIcon />, 
-          color: "error.main",
-          action: () => navigate('/fee-payment')
+          color: theme.palette.error.main,
+          trend: -5,
+          action: () => navigate('/student/fee-payment')
         },
         { 
           title: "Attendance", 
           value: `${(attendance.data?.percentage || attendance.overallPercentage)}%`, 
           icon: <AttendanceIcon />, 
-          color: (attendance.data?.percentage || attendance.overallPercentage) > 75 ? "success.main" : "warning.main",
-          action: () => navigate('/attendance')
+          color: (attendance.data?.percentage || attendance.overallPercentage) > 75 ? theme.palette.success.main : theme.palette.warning.main,
+          trend: 2,
+          action: () => navigate('/student/attendance')
         },
         { 
           title: "Mess Balance", 
           value: `₹${(mess.data?.totalDue || mess.balance).toLocaleString()}`, 
           icon: <MessIcon />, 
-          color: (mess.data?.totalDue || mess.balance) > 0 ? "success.main" : "error.main",
-          action: () => navigate('/mess-billing')
+          color: (mess.data?.totalDue || mess.balance) > 0 ? theme.palette.info.main : theme.palette.success.main,
+          trend: -3,
+          action: () => navigate('/student/mess-billing')
         },
       ]);
     } catch (err) {
@@ -130,11 +201,11 @@ const StudentDashboard = () => {
   if (loading && !refreshing) {
     return (
       <Box sx={{ p: 3 }}>
-        <Skeleton variant="rectangular" width="100%" height={400} sx={{ mb: 3 }} />
-        <Grid container spacing={2}>
+        <Skeleton variant="rectangular" width="100%" height={400} sx={{ mb: 3, borderRadius: 3 }} />
+        <Grid container spacing={3}>
           {[1, 2, 3].map((item) => (
             <Grid item xs={12} sm={4} key={item}>
-              <Skeleton variant="rectangular" height={100} />
+              <Skeleton variant="rectangular" height={150} sx={{ borderRadius: 3 }} />
             </Grid>
           ))}
         </Grid>
@@ -157,6 +228,7 @@ const StudentDashboard = () => {
               Retry
             </Button>
           }
+          sx={{ borderRadius: 2 }}
         >
           {error}
         </Alert>
@@ -166,164 +238,214 @@ const StudentDashboard = () => {
 
   return (
     <Box sx={{ p: 3 }}>
+      {/* Header Section */}
       <Box sx={{ 
         display: 'flex', 
         justifyContent: 'space-between', 
         alignItems: 'center', 
-        mb: 3 
+        mb: 4 
       }}>
-        <Typography variant="h4" sx={{ fontWeight: 600 }}>
-          Welcome, {student?.name || 'Student'}
-        </Typography>
+        <Box>
+          <Typography variant="h3" sx={{ fontWeight: 700, mb: 1, color: theme.palette.text.primary }}>
+            Welcome back, {student?.name?.split(' ')[0] || 'Student'}! 👋
+          </Typography>
+          <Typography variant="body1" color="text.secondary">
+            Here's what's happening with your hostel and mess management
+          </Typography>
+        </Box>
         <Button
           variant="outlined"
           startIcon={<RefreshIcon />}
           onClick={handleRefresh}
           disabled={refreshing}
+          sx={{ borderRadius: 2 }}
         >
           {refreshing ? 'Refreshing...' : 'Refresh'}
         </Button>
       </Box>
 
-      {/* Student Profile Card */}
-      <Card sx={{ mb: 3, borderRadius: 3, boxShadow: 3 }}>
-        <CardContent sx={{ p: 3 }}>
-          <Typography variant="h6" gutterBottom sx={{ 
-            fontWeight: 'bold', 
-            color: theme.palette.primary.dark,
-            mb: 3
-          }}>
-            Student Information
-          </Typography>
-          
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={3} sx={{ 
-              display: 'flex', 
-              flexDirection: 'column', 
-              alignItems: 'center'
-            }}>
-              <Avatar 
-                src={student?.profileImage || '/default-avatar.jpg'}
-                sx={{ 
-                  width: 120, 
-                  height: 120, 
-                  mb: 2,
-                  border: `3px solid ${theme.palette.primary.main}`,
-                  boxShadow: 3
-                }} 
-              />
-              <Typography variant="body1" sx={{ fontWeight: "bold" }}>
-                {student?.name}
-              </Typography>
-              <Chip 
-                label={`Roll No: ${student?.rollNumber || student?.rollNo || 'N/A'}`} 
-                color="primary" 
-                size="small" 
-                sx={{ mt: 1 }}
-              />
-            </Grid>
+      {/* Stats Cards */}
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        {stats.map((stat, index) => (
+          <Grid item xs={12} sm={6} md={4} key={index}>
+            <StatCard
+              title={stat.title}
+              value={stat.value}
+              icon={stat.icon}
+              color={stat.color}
+              trend={stat.trend}
+              onClick={stat.action}
+              loading={refreshing}
+            />
+          </Grid>
+        ))}
+      </Grid>
 
-            <Grid item xs={12} md={9}>
+      <Grid container spacing={3}>
+        {/* Student Profile Card */}
+        <Grid item xs={12} lg={4}>
+          <Card sx={{ borderRadius: 3, height: 'fit-content' }}>
+            <CardContent sx={{ p: 3 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                <Avatar 
+                  src={student?.profileImage || '/default-avatar.jpg'}
+                  sx={{ 
+                    width: 80, 
+                    height: 80, 
+                    mr: 2,
+                    border: `3px solid ${theme.palette.primary.main}`,
+                  }} 
+                />
+                <Box>
+                  <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>
+                    {student?.name}
+                  </Typography>
+                  <Chip 
+                    label={`Roll No: ${student?.rollNumber || student?.rollNo || 'N/A'}`} 
+                    color="primary" 
+                    size="small" 
+                    variant="outlined"
+                  />
+                </Box>
+              </Box>
+
+              <Divider sx={{ my: 2 }} />
+
               <Grid container spacing={2}>
-                <Grid item xs={12} md={6}>
+                <Grid item xs={12}>
                   <DetailField label="Branch" value={student?.branch} icon={<BranchIcon />} theme={theme} />
                   <DetailField label="Course" value={student?.course} theme={theme} />
                   <DetailField label="Year" value={student?.year} theme={theme} />
                   <DetailField label="Hostel" value={student?.hostel?.name} icon={<HostelIcon />} theme={theme} />
                 </Grid>
-                <Grid item xs={12} md={6}>
+                <Grid item xs={12}>
                   <DetailField label="Email" value={student?.email} icon={<EmailIcon />} theme={theme} />
                   <DetailField label="Phone" value={student?.contactNumber || student?.mobile} icon={<PhoneIcon />} theme={theme} />
                   <DetailField label="Date of Birth" value={student?.dob} icon={<DobIcon />} theme={theme} />
                   <DetailField label="Blood Group" value={student?.bloodGroup} icon={<BloodIcon />} theme={theme} />
                 </Grid>
               </Grid>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        {/* Charts Section */}
+        <Grid item xs={12} lg={8}>
+          <Grid container spacing={3}>
+            {/* Attendance Chart */}
+            <Grid item xs={12}>
+              <Card sx={{ borderRadius: 3 }}>
+                <CardContent sx={{ p: 3 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
+                    <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                      Monthly Attendance Overview
+                    </Typography>
+                    <Tooltip title="View detailed attendance">
+                      <IconButton 
+                        size="small" 
+                        onClick={() => navigate('/student/attendance')}
+                        sx={{ color: theme.palette.primary.main }}
+                      >
+                        <AttendanceIcon />
+                      </IconButton>
+                    </Tooltip>
+                  </Box>
+                  <Box sx={{ height: 300 }}>
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={attendanceData}>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={theme.palette.divider} />
+                        <XAxis 
+                          dataKey="name" 
+                          tick={{ fontSize: 12, fill: theme.palette.text.secondary }} 
+                          axisLine={false} 
+                        />
+                        <YAxis 
+                          domain={[0, 100]} 
+                          tick={{ fontSize: 12, fill: theme.palette.text.secondary }} 
+                          tickFormatter={(value) => `${value}%`}
+                          axisLine={false}
+                        />
+                        <RechartsTooltip 
+                          formatter={(value) => [`${value}%`, 'Attendance']}
+                          labelFormatter={(label) => `Month: ${label}`}
+                          contentStyle={{
+                            backgroundColor: theme.palette.background.paper,
+                            border: `1px solid ${theme.palette.divider}`,
+                            borderRadius: 8,
+                          }}
+                        />
+                        <Bar 
+                          dataKey="present" 
+                          fill={theme.palette.primary.main} 
+                          radius={[4, 4, 0, 0]} 
+                          name="Attendance"
+                        />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </Box>
+                </CardContent>
+              </Card>
+            </Grid>
+
+            {/* Quick Actions */}
+            <Grid item xs={12}>
+              <Card sx={{ borderRadius: 3 }}>
+                <CardContent sx={{ p: 3 }}>
+                  <Typography variant="h6" sx={{ fontWeight: 600, mb: 3 }}>
+                    Quick Actions
+                  </Typography>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6} md={3}>
+                      <Button
+                        fullWidth
+                        variant="outlined"
+                        startIcon={<FeesIcon />}
+                        onClick={() => navigate('/student/fee-payment')}
+                        sx={{ py: 2, borderRadius: 2 }}
+                      >
+                        Pay Fees
+                      </Button>
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={3}>
+                      <Button
+                        fullWidth
+                        variant="outlined"
+                        startIcon={<MessIcon />}
+                        onClick={() => navigate('/student/mess-menu')}
+                        sx={{ py: 2, borderRadius: 2 }}
+                      >
+                        View Menu
+                      </Button>
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={3}>
+                      <Button
+                        fullWidth
+                        variant="outlined"
+                        startIcon={<NotificationsIcon />}
+                        onClick={() => navigate('/student/submit-complaint')}
+                        sx={{ py: 2, borderRadius: 2 }}
+                      >
+                        Submit Complaint
+                      </Button>
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={3}>
+                      <Button
+                        fullWidth
+                        variant="outlined"
+                        startIcon={<AttendanceIcon />}
+                        onClick={() => navigate('/student/attendance')}
+                        sx={{ py: 2, borderRadius: 2 }}
+                      >
+                        View Attendance
+                      </Button>
+                    </Grid>
+                  </Grid>
+                </CardContent>
+              </Card>
             </Grid>
           </Grid>
-        </CardContent>
-      </Card>
-
-      {/* Stats Cards */}
-      <Grid container spacing={2} sx={{ mb: 3 }}>
-        {stats.map((stat, index) => (
-          <Grid item xs={12} sm={4} key={index}>
-            <Card 
-              sx={{ 
-                borderRadius: 3, 
-                boxShadow: 3,
-                cursor: 'pointer',
-                transition: 'transform 0.2s',
-                '&:hover': {
-                  transform: 'translateY(-4px)'
-                }
-              }}
-              onClick={stat.action}
-            >
-              <CardContent sx={{ p: 2 }}>
-                <Box display="flex" alignItems="center">
-                  <Box sx={{ 
-                    backgroundColor: stat.color, 
-                    color: "white", 
-                    p: 1.5, 
-                    borderRadius: 1.5, 
-                    mr: 2,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}>
-                    {stat.icon}
-                  </Box>
-                  <Box>
-                    <Typography variant="subtitle2" color="text.secondary">
-                      {stat.title}
-                    </Typography>
-                    <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                      {stat.value}
-                    </Typography>
-                  </Box>
-                </Box>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
+        </Grid>
       </Grid>
-
-      {/* Attendance Chart */}
-      <Card sx={{ mb: 3, borderRadius: 3, boxShadow: 3 }}>
-        <CardContent sx={{ p: 2 }}>
-          <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1 }}>
-            Monthly Attendance
-          </Typography>
-          <Divider sx={{ mb: 2 }} />
-          <Box sx={{ height: 250 }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={attendanceData}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                <XAxis 
-                  dataKey="name" 
-                  tick={{ fontSize: 12 }} 
-                  axisLine={false} 
-                />
-                <YAxis 
-                  domain={[0, 100]} 
-                  tick={{ fontSize: 12 }} 
-                  tickFormatter={(value) => `${value}%`}
-                />
-                <Tooltip 
-                  formatter={(value) => [`${value}%`, 'Attendance']}
-                  labelFormatter={(label) => `Month: ${label}`}
-                />
-                <Bar 
-                  dataKey="present" 
-                  fill={theme.palette.primary.main} 
-                  radius={[4, 4, 0, 0]} 
-                  name="Attendance"
-                />
-              </BarChart>
-            </ResponsiveContainer>
-          </Box>
-        </CardContent>
-      </Card>
     </Box>
   );
 };

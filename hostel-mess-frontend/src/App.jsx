@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
+import { CssBaseline, ThemeProvider } from "@mui/material";
 import { AuthProvider } from './context/AuthContext';
+import theme from './theme/theme';
 import ProtectedRoute from './components/ProtectedRoute';
 import PublicRoute from './components/PublicRoute';
 import LoginForm from "./auth/LoginForm";
@@ -22,33 +23,7 @@ import Settings from './admin/Settings';
 import { NotFound } from './components/NotFound';
 import { LoadingScreen } from './components/LoadingScreen';
 
-const theme = createTheme({
-  palette: {
-    primary: { main: "#1976d2" },
-    secondary: { main: "#dc004e" },
-    background: { default: "#f5f5f5" },
-  },
-  typography: {
-    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
-    fontSize: 14,
-    h1: {
-      fontSize: '2.5rem',
-      '@media (min-width:600px)': {
-        fontSize: '3rem',
-      },
-    },
-  },
-  components: {
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          textTransform: 'none',
-          borderRadius: 8,
-        },
-      },
-    },
-  },
-});
+
 
 function App() {
   return (

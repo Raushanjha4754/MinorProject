@@ -1,270 +1,162 @@
 // src/auth/LoginForm.jsx
-import { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { login as apiLogin } from '../api/index';
-import { 
-  Box, 
-  Typography, 
-  TextField, 
-  Button, 
-  Paper, 
-  Avatar, 
-  CircularProgress,
+import React, { useState } from 'react';
+import {
+  Box,
+  Card,
+  CardContent,
+  TextField,
+  Button,
+  Typography,
   Alert,
-  IconButton,
   InputAdornment,
-  Tabs,
-  Tab,
-  Fade
+  IconButton,
+  Paper,
+  Container,
+  useTheme,
+  useMediaQuery,
+  CircularProgress,
+  Divider
 } from '@mui/material';
-import { 
-  Lock as LockIcon, 
-  Visibility, 
+import {
+  Visibility,
   VisibilityOff,
-  Person as StudentIcon,
-  AdminPanelSettings as AdminIcon,
-  Badge as EmployeeIdIcon,
-  ConfirmationNumber as RollNumberIcon
+  School as SchoolIcon,
+  Person as PersonIcon,
+  Lock as LockIcon
 } from '@mui/icons-material';
-import hostelImage from '../assets/mega-hostel-boys.jpg';
+import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import Logo from '../assets/logo_nitj.png';
 
 const LoginForm = () => {
   const [formData, setFormData] = useState({
-    identifier: '', // 8-digit rollNumber or employeeId
+    email: '',
     password: '',
-    showPassword: false,
-    role: localStorage.getItem('preferredRole') || 'student' // Remember role selection
   });
-  
-  const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  
   const { login } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
-
-  const from = location.state?.from?.pathname || (formData.role === 'admin' ? '/admin/dashboard' : '/');
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    
-    // Strict 8-digit validation for identifier
-    if (name === 'identifier') {
-      if (value === '' || /^\d{0,8}$/.test(value)) {
-        setFormData(prev => ({
-          ...prev,
-          [name]: value
-        }));
-      }
-      return;
-    }
-    
-    // Normal handling for other fields
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleRoleChange = (event, newValue) => {
-    localStorage.setItem('preferredRole', newValue); // Remember role
-    setFormData(prev => ({
-      ...prev,
-      role: newValue,
-      identifier: '',
-      password: ''
-    }));
-  };
-
-  const validateForm = () => {
-    if (!formData.identifier.trim()) {
-      setError(formData.role === 'admin' 
-        ? 'Employee ID is required' 
-        : 'Roll Number is required');
-      return false;
-    }
-    
-    // 6-digit validation
-    if (!/^\d{8}$/.test(formData.identifier)) {
-      setError(`Must be a 8-digit ${formData.role === 'admin' ? 'Employee ID' : 'Roll Number'}`);
-      return false;
-    }
-    
-    if (!formData.password) {
-      setError('Password is required');
-      return false;
-    }
-    
-    return true;
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+    setError(''); // Clear error when user starts typing
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     setError('');
-    
-    if (!validateForm()) return;
-    
+
     try {
-      setLoading(true);
-      await login(
-        formData.identifier,
-        formData.password,
-        formData.role
-      );
-      navigate(from, { replace: true });
+      await login(formData.email, formData.password);
+      // Navigation will be handled by the auth context
     } catch (err) {
-      setError(
-        err.response?.data?.message || 
-        'Login failed. Please check your credentials and try again.'
-      );
+      setError(err.response?.data?.message || 'Login failed. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleClickShowPassword = () => {
-    setFormData(prev => ({
-      ...prev,
-      showPassword: !prev.showPassword
-    }));
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
   return (
-    <Box sx={{ 
-      display: 'flex', 
-      minHeight: '100vh',
-      background: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${hostelImage})`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      p: { xs: 2, md: 0 }
-    }}>
-      <Box sx={{
+    <Box
+      sx={{
+        minHeight: '100vh',
+        background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
         display: 'flex',
-        justifyContent: 'center',
         alignItems: 'center',
-        width: '100%'
-      }}>
-        <Fade in timeout={800}>
-          <Paper elevation={10} sx={{ 
-            p: { xs: 3, sm: 4 },
-            width: { xs: '95%', sm: '100%', md: 500 },
+        justifyContent: 'center',
+        p: 2,
+      }}
+    >
+      <Container maxWidth="sm">
+        <Paper
+          elevation={24}
+          sx={{
             borderRadius: 4,
-            backdropFilter: 'blur(5px)',
-            backgroundColor: 'rgba(255, 255, 255, 0.9)'
-          }}>
-            <Box sx={{ 
-              display: 'flex', 
-              flexDirection: 'column', 
-              alignItems: 'center',
-              mb: 3
-            }}>
-              <Avatar sx={{ 
-                bgcolor: formData.role === 'admin' ? 'secondary.main' : 'primary.main',
+            overflow: 'hidden',
+            background: 'rgba(255, 255, 255, 0.95)',
+            backdropFilter: 'blur(10px)',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+          }}
+        >
+          {/* Header Section */}
+          <Box
+            sx={{
+              background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
+              p: 4,
+              textAlign: 'center',
+              color: 'white',
+            }}
+          >
+            <Box
+              component="img"
+              src={Logo}
+              alt="NIT Jalandhar Logo"
+              sx={{
+                height: 80,
+                width: 'auto',
                 mb: 2,
-                width: 60,
-                height: 60
-              }}>
-                {formData.role === 'admin' ? <AdminIcon fontSize="large" /> : <StudentIcon fontSize="large" />}
-              </Avatar>
-              <Typography variant="h4" component="h1" sx={{ 
-                fontWeight: 700,
-                textAlign: 'center',
-                color: 'primary.main'
-              }}>
-                {formData.role === 'admin' ? 'Admin Portal' : 'Student Portal'}
-              </Typography>
-              <Typography variant="body1" sx={{ 
-                textAlign: 'center',
-                color: 'text.secondary',
-                mt: 1
-              }}>
-                Sign in to access your account
-              </Typography>
-            </Box>
-
-            <Tabs 
-              value={formData.role} 
-              onChange={handleRoleChange}
-              variant="fullWidth"
-              sx={{ 
-                mb: 3,
-                '& .MuiTabs-indicator': {
-                  height: 3
-                }
+                filter: 'brightness(0) invert(1)',
               }}
-            >
-              <Tab 
-                value="student" 
-                label="Student" 
-                icon={<StudentIcon />} 
-                iconPosition="start"
-                sx={{ textTransform: 'none', fontWeight: 600 }}
-              />
-              <Tab 
-                value="admin" 
-                label="Admin" 
-                icon={<AdminIcon />} 
-                iconPosition="start"
-                sx={{ textTransform: 'none', fontWeight: 600 }}
-              />
-            </Tabs>
+            />
+            <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>
+              Welcome Back
+            </Typography>
+            <Typography variant="body1" sx={{ opacity: 0.9 }}>
+              Sign in to your Hostel Mess Management account
+            </Typography>
+          </Box>
 
+          {/* Login Form */}
+          <CardContent sx={{ p: 4 }}>
             {error && (
-              <Alert severity="error" sx={{ mb: 3 }}>
+              <Alert severity="error" sx={{ mb: 3, borderRadius: 2 }}>
                 {error}
               </Alert>
             )}
 
-            <Box 
-              component="form" 
-              onSubmit={handleSubmit}
-              sx={{ mt: 1 }}
-            >
+            <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
               <TextField
-                margin="normal"
-                required
                 fullWidth
-                id="identifier"
-                label={formData.role === 'admin' ? 'Employee ID (8 digits)' : 'Roll Number (8 digits)'}
-                name="identifier"
-                value={formData.identifier}
+                label="Email Address"
+                name="email"
+                type="email"
+                value={formData.email}
                 onChange={handleChange}
-                inputProps={{
-                  maxLength: 8,
-                  inputMode: 'numeric',
-                  pattern: '\\d{8}',
-                  title: formData.role === 'admin' 
-                    ? '8-digit Employee ID' 
-                    : '8-digit Roll Number'
-                }}
+                required
+                variant="outlined"
+                sx={{ mb: 3 }}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      {formData.role === 'admin' ? 
-                        <EmployeeIdIcon color="action" /> : 
-                        <RollNumberIcon color="action" />
-                      }
+                      <PersonIcon color="action" />
                     </InputAdornment>
                   ),
-                }}
-                sx={{
-                  '& .MuiOutlinedInput-root': {
-                    borderRadius: 2,
-                  }
                 }}
               />
 
               <TextField
-                margin="normal"
-                required
                 fullWidth
-                name="password"
                 label="Password"
-                type={formData.showPassword ? 'text' : 'password'}
-                id="password"
-                autoComplete="current-password"
+                name="password"
+                type={showPassword ? 'text' : 'password'}
                 value={formData.password}
                 onChange={handleChange}
+                required
+                variant="outlined"
+                sx={{ mb: 4 }}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -274,20 +166,14 @@ const LoginForm = () => {
                   endAdornment: (
                     <InputAdornment position="end">
                       <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={handleClickShowPassword}
+                        onClick={togglePasswordVisibility}
                         edge="end"
+                        size="small"
                       >
-                        {formData.showPassword ? <VisibilityOff /> : <Visibility />}
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
                       </IconButton>
                     </InputAdornment>
                   ),
-                }}
-                sx={{
-                  '& .MuiOutlinedInput-root': {
-                    borderRadius: 2,
-                  },
-                  mt: 3
                 }}
               />
 
@@ -295,18 +181,16 @@ const LoginForm = () => {
                 type="submit"
                 fullWidth
                 variant="contained"
+                size="large"
                 disabled={loading}
                 sx={{
-                  mt: 3,
-                  mb: 2,
                   py: 1.5,
-                  borderRadius: 2,
-                  fontSize: '1rem',
+                  fontSize: '1.1rem',
                   fontWeight: 600,
-                  bgcolor: formData.role === 'admin' ? 'secondary.main' : 'primary.main',
+                  background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
                   '&:hover': {
-                    bgcolor: formData.role === 'admin' ? 'secondary.dark' : 'primary.dark',
-                  }
+                    background: `linear-gradient(135deg, ${theme.palette.primary.dark} 0%, ${theme.palette.primary.main} 100%)`,
+                  },
                 }}
               >
                 {loading ? (
@@ -316,9 +200,46 @@ const LoginForm = () => {
                 )}
               </Button>
             </Box>
-          </Paper>
-        </Fade>
-      </Box>
+
+            <Divider sx={{ my: 3 }}>
+              <Typography variant="body2" color="text.secondary">
+                or
+              </Typography>
+            </Divider>
+
+            <Box sx={{ textAlign: 'center' }}>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                Access different portals
+              </Typography>
+              <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center' }}>
+                <Button
+                  variant="outlined"
+                  startIcon={<SchoolIcon />}
+                  size="small"
+                  sx={{ borderRadius: 2 }}
+                >
+                  Student Portal
+                </Button>
+                <Button
+                  variant="outlined"
+                  startIcon={<PersonIcon />}
+                  size="small"
+                  sx={{ borderRadius: 2 }}
+                >
+                  Admin Portal
+                </Button>
+              </Box>
+            </Box>
+          </CardContent>
+        </Paper>
+
+        {/* Footer */}
+        <Box sx={{ textAlign: 'center', mt: 3 }}>
+          <Typography variant="body2" color="white" sx={{ opacity: 0.8 }}>
+            © 2024 Dr. B.R. Ambedkar NIT Jalandhar. All rights reserved.
+          </Typography>
+        </Box>
+      </Container>
     </Box>
   );
 };

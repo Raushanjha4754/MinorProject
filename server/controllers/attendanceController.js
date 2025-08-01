@@ -4,7 +4,7 @@ const User = require('../models/User');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 
-// Get all attendance records (admin only)
+// attendance records (for - admin only)
 exports.getAllAttendance = catchAsync(async (req, res, next) => {
   const { month, year, student } = req.query;
   
@@ -34,7 +34,7 @@ exports.getAllAttendance = catchAsync(async (req, res, next) => {
   });
 });
 
-// Mark attendance (admin only)
+// Mark the attendance (admin only)
 exports.markAttendance = catchAsync(async (req, res, next) => {
   const { student, date, status } = req.body;
 
@@ -44,7 +44,7 @@ exports.markAttendance = catchAsync(async (req, res, next) => {
     return next(new AppError('No student found with that ID', 404));
   }
 
-  // Check if attendance already marked for this date
+  // Check that attendence alredy marked
   const existingAttendance = await Attendance.findOne({
     student,
     date: new Date(date)
@@ -69,7 +69,7 @@ exports.markAttendance = catchAsync(async (req, res, next) => {
   });
 });
 
-// Apply for leave (student)
+// leave application for student
 exports.applyForLeave = catchAsync(async (req, res, next) => {
   const { date, reason } = req.body;
 
@@ -99,7 +99,7 @@ exports.applyForLeave = catchAsync(async (req, res, next) => {
   });
 });
 
-// Approve leave (admin)
+// Approve leave by admin
 exports.approveLeave = catchAsync(async (req, res, next) => {
   const { status } = req.body;
 
@@ -131,7 +131,7 @@ exports.approveLeave = catchAsync(async (req, res, next) => {
   });
 });
 
-// Get current student's attendance
+
 exports.getMyAttendance = catchAsync(async (req, res, next) => {
   const { month, year } = req.query;
   
@@ -155,7 +155,7 @@ exports.getMyAttendance = catchAsync(async (req, res, next) => {
   });
 });
 
-// Get attendance summary for dashboard
+// attendence summary foe dashboard
 exports.getAttendanceSummary = catchAsync(async (req, res, next) => {
   const currentDate = new Date();
   const currentMonth = currentDate.getMonth() + 1;
@@ -170,7 +170,7 @@ exports.getAttendanceSummary = catchAsync(async (req, res, next) => {
     date: { $gte: startDate, $lte: endDate }
   });
 
-  // Calculate statistics
+  // statics
   const present = attendance.filter(a => a.status === 'present').length;
   const absent = attendance.filter(a => a.status === 'absent').length;
   const leave = attendance.filter(a => a.status === 'leave').length;
@@ -178,7 +178,7 @@ exports.getAttendanceSummary = catchAsync(async (req, res, next) => {
   const workingDays = totalDays; // Adjust for weekends/holidays if needed
   const percentage = ((present + leave) / workingDays * 100).toFixed(1);
 
-  // Monthly data for chart
+  // Monthly data on dashboard in chart format
   const monthlyData = [];
   for (let i = 0; i < 6; i++) {
     const month = currentMonth - i > 0 ? currentMonth - i : 12 + (currentMonth - i);

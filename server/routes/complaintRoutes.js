@@ -4,14 +4,14 @@ const router = express.Router();
 const complaintController = require('../controllers/complaintController');
 const authController = require('../controllers/authController');
 
-// Protect all routes
+//protect all routes
 router.use(authController.protect);
 
-// Student complaint routes
+//student complaint routes
 router.get('/me', complaintController.getMyComplaints);
 router.post('/', complaintController.createComplaint);
 
-// Admin only routes
+//admin only routes
 router.use(authController.restrictTo('admin'));
 router.get('/', complaintController.getAllComplaints);
 router.put('/:id/resolve', complaintController.resolveComplaint);

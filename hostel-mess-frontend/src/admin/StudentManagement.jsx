@@ -1,4 +1,3 @@
-// src/admin/StudentManagement
 import { useState, useEffect } from 'react';
 import { 
   Box, Typography, Table, TableBody, TableCell, 

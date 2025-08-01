@@ -1,5 +1,4 @@
 // src/components/StudentTopbar
-
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -13,28 +12,22 @@ import {
   Menu,
   MenuItem,
   Badge,
-  Chip,
   useTheme,
   useMediaQuery,
-  Divider,
-  Button
-} from '@mui/material';
-import {
+  Divider
+} from '@mui/material';import {
   Notifications as NotificationsIcon,
   AccountCircle as AccountCircleIcon,
   Settings as SettingsIcon,
-  Logout as LogoutIcon,
-  School as SchoolIcon,
-  Menu as MenuIcon
+  Logout as LogoutIcon
 } from '@mui/icons-material';
 import Logo from '../assets/logo_nitj.png';
-
 const StudentTopbar = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  
+
   const [anchorEl, setAnchorEl] = useState(null);
   const [notificationAnchor, setNotificationAnchor] = useState(null);
 
@@ -60,7 +53,7 @@ const StudentTopbar = () => {
   const notifications = [
     { id: 1, message: 'Fee payment due in 3 days', type: 'warning' },
     { id: 2, message: 'New mess menu updated', type: 'info' },
-    { id: 3, message: 'Attendance marked for today', type: 'success' },
+    { id: 3, message: 'Attendance marked for today', type: 'success' }
   ];
 
   const unreadCount = notifications.length;
@@ -73,7 +66,7 @@ const StudentTopbar = () => {
         backgroundColor: 'white',
         color: theme.palette.text.primary,
         borderBottom: `1px solid ${theme.palette.divider}`,
-        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
       }}
     >
       <Toolbar sx={{ px: { xs: 2, md: 3 }, py: 1 }}>
@@ -84,11 +77,11 @@ const StudentTopbar = () => {
             src={Logo}
             alt="NIT Jalandhar Logo"
             sx={{
-              height: { xs: 50, md: 60 },
-              width: 'auto',
+            height: { xs: 50, md: 60 },
+              width: 'auto'
             }}
           />
-          {!isMobile && (
+        {!isMobile && (
             <Box>
               <Typography
                 variant="h6"
@@ -96,7 +89,7 @@ const StudentTopbar = () => {
                   fontSize: { xs: '1rem', md: '1.25rem' },
                   fontWeight: 600,
                   lineHeight: 1.2,
-                  color: theme.palette.text.primary,
+                  color: theme.palette.text.primary
                 }}
               >
                 DR B R AMBEDKAR NIT JALANDHAR
@@ -105,7 +98,7 @@ const StudentTopbar = () => {
                 variant="caption"
                 sx={{
                   color: theme.palette.text.secondary,
-                  fontSize: '0.75rem',
+                  fontSize: '0.75rem'
                 }}
               >
                 Hostel Mess Management System
@@ -122,13 +115,12 @@ const StudentTopbar = () => {
               flex: 1,
               textAlign: 'center',
               fontWeight: 600,
-              color: theme.palette.primary.main,
+              color: theme.palette.primary.main
             }}
           >
             Student Portal
           </Typography>
         )}
-
         {/* Right side - Actions */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, ml: 'auto' }}>
           {/* Notifications */}
@@ -151,7 +143,7 @@ const StudentTopbar = () => {
                   fontSize: '0.875rem',
                   fontWeight: 600,
                   lineHeight: 1.2,
-                  color: theme.palette.text.primary,
+                  color: theme.palette.text.primary
                 }}
               >
                 {user?.name || 'Student Name'}
@@ -160,23 +152,20 @@ const StudentTopbar = () => {
                 variant="caption"
                 sx={{
                   fontSize: '0.75rem',
-                  color: theme.palette.text.secondary,
+                  color: theme.palette.text.secondary
                 }}
               >
                 {user?.rollNumber || 'Roll Number'}
               </Typography>
             </Box>
-            
-            <IconButton
-              onClick={handleProfileMenuOpen}
-              sx={{ p: 0.5 }}
-            >
+
+            <IconButton onClick={handleProfileMenuOpen} sx={{ p: 0.5 }}>
               <Avatar
                 src={user?.profileImage || '/default-avatar.jpg'}
                 sx={{
                   width: 40,
                   height: 40,
-                  border: `2px solid ${theme.palette.primary.main}`,
+                  border: `2px solid ${theme.palette.primary.main}`
                 }}
               >
                 <AccountCircleIcon />
@@ -185,7 +174,6 @@ const StudentTopbar = () => {
           </Box>
         </Box>
       </Toolbar>
-
       {/* Notifications Menu */}
       <Menu
         anchorEl={notificationAnchor}
@@ -196,8 +184,8 @@ const StudentTopbar = () => {
             mt: 1,
             minWidth: 300,
             maxHeight: 400,
-            overflow: 'auto',
-          },
+            overflow: 'auto'
+          }
         }}
       >
         <Box sx={{ p: 2, borderBottom: `1px solid ${theme.palette.divider}` }}>
@@ -218,7 +206,7 @@ const StudentTopbar = () => {
                       ? theme.palette.warning.main
                       : notification.type === 'error'
                       ? theme.palette.error.main
-                      : theme.palette.success.main,
+                      : theme.palette.success.main
                 }}
               />
               <Typography variant="body2">{notification.message}</Typography>
@@ -242,8 +230,8 @@ const StudentTopbar = () => {
         PaperProps={{
           sx: {
             mt: 1,
-            minWidth: 200,
-          },
+            minWidth: 200
+          }
         }}
       >
         <Box sx={{ p: 2, borderBottom: `1px solid ${theme.palette.divider}` }}>
@@ -254,19 +242,19 @@ const StudentTopbar = () => {
             {user?.rollNumber || 'Roll Number'}
           </Typography>
         </Box>
-        
+
         <MenuItem onClick={() => { navigate('/student/profile'); handleMenuClose(); }}>
           <AccountCircleIcon sx={{ mr: 2 }} />
           Profile
         </MenuItem>
-        
+
         <MenuItem onClick={() => { navigate('/student/settings'); handleMenuClose(); }}>
           <SettingsIcon sx={{ mr: 2 }} />
           Settings
         </MenuItem>
-        
+
         <Divider />
-        
+
         <MenuItem onClick={handleLogout} sx={{ color: theme.palette.error.main }}>
           <LogoutIcon sx={{ mr: 2 }} />
           Logout
@@ -275,5 +263,4 @@ const StudentTopbar = () => {
     </AppBar>
   );
 };
-
 export default StudentTopbar;

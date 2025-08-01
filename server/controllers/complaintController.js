@@ -4,7 +4,7 @@ const User = require('../models/User');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 
-// Get all complaints (admin only)
+
 exports.getAllComplaints = catchAsync(async (req, res, next) => {
   const { status, category } = req.query;
   
@@ -32,7 +32,7 @@ exports.getAllComplaints = catchAsync(async (req, res, next) => {
   });
 });
 
-// Create a complaint (student)
+// create a complaint given by student
 exports.createComplaint = catchAsync(async (req, res, next) => {
   const { title, category, description } = req.body;
 
@@ -51,7 +51,7 @@ exports.createComplaint = catchAsync(async (req, res, next) => {
   });
 });
 
-// Resolve a complaint (admin)
+// resolve complaints by admin (access to admin)
 exports.resolveComplaint = catchAsync(async (req, res, next) => {
   const { status, response } = req.body;
 
@@ -88,7 +88,7 @@ exports.resolveComplaint = catchAsync(async (req, res, next) => {
   });
 });
 
-// Get current student's complaints
+// getting current complain by student
 exports.getMyComplaints = catchAsync(async (req, res, next) => {
   const { status } = req.query;
   

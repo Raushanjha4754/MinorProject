@@ -1,12 +1,17 @@
 // src/auth/LoginForm.jsx
 import React, { useState } from 'react';
-import {
-  Box,
-  Card,
-  CardContent,
-  TextField,
-  Button,
-  Typography,
+import { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+
+import { 
+  Box, 
+  Typography, 
+  TextField, 
+  Button, 
+  Paper, 
+  Avatar, 
+  CircularProgress,
   Alert,
   InputAdornment,
   IconButton,
@@ -30,8 +35,15 @@ import Logo from '../assets/logo_nitj.png';
 
 const LoginForm = () => {
   const [formData, setFormData] = useState({
+
     email: '',
     password: '',
+
+    identifier: '',
+    password: '',
+    showPassword: false,
+    role: localStorage.getItem('preferredRole') || 'student'
+
   });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -39,6 +51,7 @@ const LoginForm = () => {
   
   const { login } = useAuth();
   const navigate = useNavigate();
+
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -48,6 +61,57 @@ const LoginForm = () => {
       [e.target.name]: e.target.value,
     });
     setError(''); // Clear error when user starts typing
+
+  const location = useLocation();
+
+  // const from = location.state?.from?.pathname || (formData.role === 'admin' ? '/admin/dashboard' : '/');
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (name === 'identifier') {
+      if (value === '' || /^\d{0,8}$/.test(value)) {
+        setFormData(prev => ({
+          ...prev,
+          [name]: value
+        }));
+      }
+      return;
+    }
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleRoleChange = (event, newValue) => {
+    localStorage.setItem('preferredRole', newValue);
+    setFormData(prev => ({
+      ...prev,
+      role: newValue,
+      identifier: '',
+      password: ''
+    }));
+  };
+
+  const validateForm = () => {
+    if (!formData.identifier.trim()) {
+      setError(formData.role === 'admin' 
+        ? 'Employee ID is required' 
+        : 'Roll Number is required');
+      return false;
+    }
+    if (!/^\d{8}$/.test(formData.identifier)) {
+      setError(`Must be a 8-digit ${formData.role === 'admin' ? 'Employee ID' : 'Roll Number'}`);
+      return false;
+    }
+    
+    if (!formData.password) {
+      setError('Password is required');
+      return false;
+    }
+    
+    return true;
+
   };
 
   const handleSubmit = async (e) => {
@@ -56,10 +120,31 @@ const LoginForm = () => {
     setError('');
 
     try {
+
       await login(formData.email, formData.password);
       // Navigation will be handled by the auth context
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed. Please try again.');
+
+      setLoading(true);
+      const response = await login(formData.identifier, formData.password, formData.role);
+      console.log("response : ",response.token)
+
+      localStorage.setItem("token",`Bearer ${response.token}`)
+      console.log("saved token............")
+      console.log(localStorage.getItem("token"));
+      
+      // Redirect based on role
+      const redirectPath = formData.role === 'admin' 
+        ? '/admin' 
+        : '/student';
+      
+      navigate(redirectPath, { replace: true });
+      // navigate("/student")
+      
+    } catch (err) {
+      setError(err.message || 'Login failed. Please check your credentials.');
+
     } finally {
       setLoading(false);
     }
@@ -130,10 +215,17 @@ const LoginForm = () => {
             <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
               <TextField
                 fullWidth
+
                 label="Email Address"
                 name="email"
                 type="email"
                 value={formData.email}
+
+                id="identifier"
+                label={formData.role === 'admin' ? 'Employee ID' : 'Roll Number'}
+                name="identifier"
+                value={formData.identifier}
+>>>>>>> 04f52ebdd7eed3164829aa0fc1d31b57a6b69e80
                 onChange={handleChange}
                 required
                 variant="outlined"

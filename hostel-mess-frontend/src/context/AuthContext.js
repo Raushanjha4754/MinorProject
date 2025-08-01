@@ -1,5 +1,7 @@
+// src/context/AuthContext.js
 import { createContext, useContext, useState, useEffect } from 'react';
-import api from '../api';
+import api from '../api'; 
+
 
 const AuthContext = createContext();
 
@@ -7,16 +9,25 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Initialize auth state
   useEffect(() => {
     const loadUser = async () => {
       try {
         const token = localStorage.getItem('token');
         if (token) {
-          const { data } = await api.getMe();
-          setUser(data.user);
+          const response = await api.getMe();
+          
+          // Handle both response formats:
+          const userData = response.user || response;  // This is the critical fix
+          
+          if (!userData?.role) {
+            throw new Error('Invalid user data format');
+          }
+          
+          setUser(userData);
+          localStorage.setItem('userRole', userData.role);
         }
       } catch (err) {
+        console.error('Auth load error:', err);
         logout();
       } finally {
         setLoading(false);
@@ -25,49 +36,65 @@ export const AuthProvider = ({ children }) => {
     loadUser();
   }, []);
 
-  // Login function
-// In your main AuthContext file (not the one in api/auth)
+// src/context/AuthContext.js
 const login = async (identifier, password, role) => {
+  
   try {
-    // Show loading state immediately
-    setLoading(true); 
-
-    const startTime = Date.now();
+    setLoading(true);
     const { token, user } = await api.login(identifier, password, role);
     
-    console.log(`Login completed in ${Date.now() - startTime}ms`);
-    
+    // Store auth data
     localStorage.setItem('token', token);
+    localStorage.setItem('user', JSON.stringify(user));
+    
+    // Set user state
     setUser(user);
     return user;
-
-  } catch (err) {
-    console.error('Auth Context Error:', {
-      error: err,
-      time: new Date().toISOString()
-    });
     
-    // Specific error messages
-    let message = err.message;
-    if (message.includes('timeout')) {
-      message = 'Server is taking too long to respond. Please try again later.';
-    } else if (message.includes('credentials')) {
-      message = 'Invalid employee ID or password';
-    }
-
-    throw new Error(message);
+  }
+  catch (err) {
+    console.error('Login error:', err);
+    // Clear any partial auth state on error
+    localStorage.removeItem('token');
+    // localStorage.removeItem('userRole');
+    localStorage.removeItem('user');
+    setUser(null);
+    throw err;
   } finally {
     setLoading(false);
   }
 };
 
-  // Logout function
+// Update loadUser in useEffect
+const loadUser = async () => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    console.log('Attempting to load user with token:', token); // Debug
+    
+    const response = await api.getMe();
+    console.log('User data response:', response); // Debug
+
+    if (!response.data) {
+      throw new Error('Invalid user data format');
+    }
+
+    setUser(response.data);
+  } catch (err) {
+    console.error('Auth load error:', err);
+    logout();
+  } finally {
+    setLoading(false);
+  }
+};
+  
+
   const logout = () => {
     localStorage.removeItem('token');
     setUser(null);
   };
 
-  // Context value
   const value = {
     user,
     loading,

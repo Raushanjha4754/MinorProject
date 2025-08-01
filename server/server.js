@@ -4,6 +4,7 @@ const morgan = require('morgan');
 const cors = require('cors');
 const errorHandler = require('./middleware/errorHandler');
 const config = require('./config/config');
+const bodyParser = require('body-parser')
 
 // Import routes
 const authRoutes = require('./routes/auth');
@@ -17,7 +18,16 @@ const messRoutes = require('./routes/messRoutes');
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(bodyParser.json())
+
+const corsOptions = {
+  origin: 'http://localhost:3000',
+  credentials: true,
+  optionsSuccessStatus: 200
+};
+
+app.use(cors(corsOptions));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -25,13 +35,18 @@ if (config.env === 'development') {
   app.use(morgan('dev'));
 }
 
+app.use((req, res, next) => {
+  console.log(`Incoming ${req.method} request to ${req.originalUrl}`);
+  next();
+});
+
 // Database connection
 mongoose.connect(config.mongodb.uri, config.mongodb.options)
   .then(() => console.log('Connected to MongoDB!'))
   .catch(err => console.error('MongoDB connection error:', err));
 
 // Routes
-app.use('/api/auth', authRoutes);
+app.use('/api', authRoutes);
 app.use('/api/students', studentRoutes);
 app.use('/api/attendance', attendanceRoutes);
 app.use('/api/complaints', complaintRoutes);
@@ -51,6 +66,7 @@ app.use(errorHandler);
 
 // Start server
 const port = config.port;
+
 app.listen(port, () => {
   console.log(`Server running in ${config.env} mode on port ${port}`);
 });

@@ -125,10 +125,12 @@ const userSchema = new mongoose.Schema({
 userSchema.pre('save', async function(next) {
   if (!this.isModified('password')) return next();
   
+  // Accept all bcrypt hash prefixes
+  if (this.password && /^\$2[aby]\$/.test(this.password)) return next();
+
   try {
-    // Hash password with cost of 12
     this.password = await bcrypt.hash(this.password, 12);
-    this.passwordChangedAt = Date.now() - 1000; // Subtract 1s to ensure token created after
+    this.passwordChangedAt = Date.now() - 1000;
     next();
   } catch (err) {
     next(err);

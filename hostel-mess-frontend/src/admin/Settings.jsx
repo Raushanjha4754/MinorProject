@@ -61,7 +61,6 @@ const Settings = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validate()) {
-      // In a real app, you would call your API here
       console.log('Settings submitted:', formData);
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
@@ -81,7 +80,6 @@ const Settings = () => {
       )}
 
       <Grid container spacing={3}>
-        {/* Account Security */}
         <Grid item xs={12} md={6}>
           <Card elevation={3}>
             <CardContent>
@@ -140,8 +138,6 @@ const Settings = () => {
             </CardContent>
           </Card>
         </Grid>
-
-        {/* Notification Preferences */}
         <Grid item xs={12} md={6}>
           <Card elevation={3}>
             <CardContent>
@@ -177,8 +173,6 @@ const Settings = () => {
             </CardContent>
           </Card>
         </Grid>
-
-        {/* Appearance */}
         <Grid item xs={12}>
           <Card elevation={3}>
             <CardContent>

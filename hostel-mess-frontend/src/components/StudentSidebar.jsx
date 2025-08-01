@@ -1,6 +1,4 @@
-
 // src/components/StudentSide
-
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -22,6 +20,7 @@ import {
   Tooltip,
   Badge
 } from '@mui/material';
+
 import {
   Dashboard as DashboardIcon,
   Paid as FeesIcon,
@@ -35,6 +34,7 @@ import {
   Settings as SettingsIcon,
   Notifications as NotificationsIcon
 } from '@mui/icons-material';
+
 import Logo from '../assets/logo_nitj.png';
 
 const drawerWidth = 280;

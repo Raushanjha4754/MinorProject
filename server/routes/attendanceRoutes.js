@@ -4,15 +4,15 @@ const router = express.Router();
 const attendanceController = require('../controllers/attendanceController');
 const authController = require('../controllers/authController');
 
-// Protect all routes
+//protect all routes
 router.use(authController.protect);
 
-// Student attendance routes
+//student attendance routes
 router.get('/me', attendanceController.getMyAttendance);
 router.post('/leave', attendanceController.applyForLeave);
 router.get('/summary', attendanceController.getAttendanceSummary);
 
-// Admin only routes
+//admin only routes
 router.use(authController.restrictTo('admin'));
 router.get('/', attendanceController.getAllAttendance);
 router.post('/', attendanceController.markAttendance);

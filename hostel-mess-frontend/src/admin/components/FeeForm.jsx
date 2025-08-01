@@ -1,4 +1,3 @@
-// src/admin/components/FeeForm
 import { 
     Grid, TextField, FormControl, 
     InputLabel, Select, MenuItem, 
@@ -117,7 +116,6 @@ import {
                 value={formik.values.status}
                 onChange={(e) => {
                   formik.handleChange(e);
-                  // Reset payment fields if status changes to pending
                   if (e.target.value === 'pending') {
                     formik.setFieldValue('paymentDate', null);
                     formik.setFieldValue('transactionId', '');

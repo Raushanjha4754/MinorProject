@@ -9,9 +9,6 @@ import {
   useTheme,
   Chip
 } from '@mui/material';
-
-import { Card, CardContent, Typography, Box, Grid } from '@mui/material';
-
 import {
   People as PeopleIcon,
   Payment as PaymentIcon,

@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-
 import {
   Box,
   Typography,
@@ -17,30 +16,30 @@ import {
   Container,
   useTheme,
   useMediaQuery,
-  Divider
+  Divider,
+  Tabs,
+  Tab
 } from '@mui/material';
 import {
   Visibility,
   VisibilityOff,
   School as SchoolIcon,
   Person as PersonIcon,
-  Lock as LockIcon
+  Lock as LockIcon,
+  AdminPanelSettings as AdminIcon
 } from '@mui/icons-material';
-
 import Logo from '../assets/logo_nitj.png';
 
 const LoginForm = () => {
   const [formData, setFormData] = useState({
-    email: '',
     identifier: '',
     password: '',
-    showPassword: false,
     role: localStorage.getItem('preferredRole') || 'student'
   });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-
+  
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -77,19 +76,22 @@ const LoginForm = () => {
 
   const validateForm = () => {
     if (!formData.identifier.trim()) {
-      setError(formData.role === 'admin'
-        ? 'Employee ID is required'
+      setError(formData.role === 'admin' 
+        ? 'Employee ID is required' 
         : 'Roll Number is required');
       return false;
     }
+    
     if (!/^\d{8}$/.test(formData.identifier)) {
       setError(`Must be an 8-digit ${formData.role === 'admin' ? 'Employee ID' : 'Roll Number'}`);
       return false;
     }
+    
     if (!formData.password) {
       setError('Password is required');
       return false;
     }
+    
     return true;
   };
 
@@ -141,7 +143,7 @@ const LoginForm = () => {
             border: '1px solid rgba(255, 255, 255, 0.2)',
           }}
         >
-          {/* Header */}
+          {/* Header Section */}
           <Box
             sx={{
               background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
@@ -176,6 +178,35 @@ const LoginForm = () => {
                 {error}
               </Alert>
             )}
+
+            {/* Role Selection Tabs */}
+            <Tabs 
+              value={formData.role} 
+              onChange={handleRoleChange}
+              variant="fullWidth"
+              sx={{ 
+                mb: 3,
+                '& .MuiTabs-indicator': {
+                  height: 3
+                }
+              }}
+            >
+              <Tab 
+                value="student" 
+                label="Student" 
+                icon={<SchoolIcon />} 
+                iconPosition="start"
+                sx={{ textTransform: 'none', fontWeight: 600 }}
+              />
+              <Tab 
+                value="admin" 
+                label="Admin" 
+                icon={<AdminIcon />} 
+                iconPosition="start"
+                sx={{ textTransform: 'none', fontWeight: 600 }}
+              />
+            </Tabs>
+
             <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
               <TextField
                 fullWidth
@@ -186,6 +217,14 @@ const LoginForm = () => {
                 required
                 variant="outlined"
                 sx={{ mb: 3 }}
+                inputProps={{
+                  maxLength: 8,
+                  inputMode: 'numeric',
+                  pattern: '\\d{8}',
+                  title: formData.role === 'admin' 
+                    ? '8-digit Employee ID' 
+                    : '8-digit Roll Number'
+                }}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -194,6 +233,7 @@ const LoginForm = () => {
                   ),
                 }}
               />
+
               <TextField
                 fullWidth
                 label="Password"
@@ -223,6 +263,7 @@ const LoginForm = () => {
                   ),
                 }}
               />
+
               <Button
                 type="submit"
                 fullWidth
@@ -268,7 +309,7 @@ const LoginForm = () => {
                 </Button>
                 <Button
                   variant="outlined"
-                  startIcon={<PersonIcon />}
+                  startIcon={<AdminIcon />}
                   size="small"
                   sx={{ borderRadius: 2 }}
                 >

@@ -70,7 +70,7 @@ The **Hostel and Mess Management System** is a full-stack web application design
 - [Raushan Jha](https://github.com/Raushanjha4754)
 - [Monib Singha](https://github.com/Monib007)
 - [Bhaskar Kumar](https://github.com/Dhairya250974)
-- Akhilesh Chauhan
+- [Akhilesh Chauhan](https://github.com/Akhilesh278)
 
 ---
 

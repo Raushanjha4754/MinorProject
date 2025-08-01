@@ -5,10 +5,7 @@ dotenv.config({ path: './.env' });
 module.exports = {
   port: process.env.PORT || 5000,
   mongodb: {
-    uri: process.env.MONGODB_URI.replace(
-      '<db_password>',
-      process.env.DB_PASSWORD
-    ),
+    uri: process.env.MONGODB_URI || 'mongodb://localhost:27017/hostel-mess-management',
     options: {
       useNewUrlParser: true,
       useUnifiedTopology: true,

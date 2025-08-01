@@ -81,6 +81,9 @@ The **Hostel and Mess Management System** is a full-stack web application design
 Department of Instrumentation and Control Engineering  
 National Institute of Technology, Jalandhar
 
+ **Ashutosh Anand**  
+ *Senior Software Developer* <br> Paytm
+
 ---
 
 ## 📈 Future Enhancements

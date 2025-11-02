@@ -19,6 +19,7 @@
     "chart.js": "^4.4.9",
     "date-fns": "^4.1.0",
     "formik": "^2.4.6",
+    "hostel-mess-management": "file:..",
     "jsonwebtoken": "^9.0.2",
     "react": "^19.1.0",
     "react-chartjs-2": "^5.3.0",

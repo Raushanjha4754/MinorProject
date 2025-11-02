@@ -1,0 +1,28 @@
+{
+  "name": "hostel-mess-management",
+  "version": "1.0.0",
+  "description": "Hostel and Mess Management System - NIT Jalandhar",
+  "private": true,
+  "scripts": {
+    "install:all": "npm install --prefix server && npm install --prefix hostel-mess-frontend",
+    "dev": "concurrently \"npm run dev --prefix server\" \"npm start --prefix hostel-mess-frontend\"",
+    "dev:server": "npm run dev --prefix server",
+    "dev:client": "npm start --prefix hostel-mess-frontend",
+    "start": "concurrently \"npm start --prefix server\" \"npm start --prefix hostel-mess-frontend\"",
+    "seed": "npm run seed --prefix server"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "npm-run-all": "^4.1.5"
+  },
+  "keywords": [
+    "hostel",
+    "mess",
+    "management",
+    "react",
+    "nodejs",
+    "mongodb"
+  ],
+  "author": "NIT Jalandhar Minor Project Team",
+  "license": "ISC"
+}

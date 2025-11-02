@@ -148,7 +148,36 @@ Choose one of the following options:
 
 ## 🎯 Quick Start (All at Once)
 
-If you want to run everything quickly:
+You have **three options** to run both backend and frontend:
+
+### Option 1: Using Root Package.json (Recommended) ⭐
+
+This is the easiest way - run both in a single terminal:
+
+```bash
+# From the project root directory
+npm install
+npm run dev
+```
+
+This will start both:
+
+- ✅ Backend server on `http://localhost:5000`
+- ✅ Frontend app on `http://localhost:3000`
+
+**First time setup:**
+
+```bash
+# Install all dependencies (backend + frontend + concurrently)
+npm run install:all
+
+# Then start both
+npm run dev
+```
+
+### Option 2: Separate Terminals (Traditional Method)
+
+Use two terminal windows:
 
 ```bash
 # Terminal 1 - Backend
@@ -161,6 +190,33 @@ cd hostel-mess-frontend
 npm install
 npm start
 ```
+
+### Option 3: Using npm-run-all or concurrently Manually
+
+If you prefer more control:
+
+```bash
+# Install concurrently globally (optional)
+npm install -g concurrently
+
+# From project root
+concurrently "npm run dev --prefix server" "npm start --prefix hostel-mess-frontend"
+```
+
+---
+
+## 📦 Root Package.json Scripts
+
+After running `npm install` in the root directory, you can use these commands:
+
+| Command               | Description                                       |
+| --------------------- | ------------------------------------------------- |
+| `npm run install:all` | Install dependencies for both server and frontend |
+| `npm run dev`         | **Start both backend and frontend in dev mode**   |
+| `npm run dev:server`  | Start only backend server                         |
+| `npm run dev:client`  | Start only frontend                               |
+| `npm start`           | Start both in production mode                     |
+| `npm run seed`        | Seed the database with sample data                |
 
 ---
 

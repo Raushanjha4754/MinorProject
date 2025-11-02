@@ -1,5 +1,23 @@
-import React from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+/**
+ * ============================================================================
+ * Admin Layout Component
+ * Hostel Mess Management System - NIT Jalandhar
+ * ============================================================================
+ * 
+ * This component provides the main layout structure for authenticated admins.
+ * It includes:
+ * - Sidebar navigation with admin menu items
+ * - Top app bar for mobile devices
+ * - Main content area where child routes render
+ * 
+ * Features:
+ * - Responsive design (mobile/tablet/desktop)
+ * - Role-based access (admin only)
+ * - Navigation state management
+ */
+
+import React, { useState } from 'react';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { 
   Box, 
   CssBaseline, 
@@ -29,23 +47,98 @@ import {
   Settings as SettingsIcon
 } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
 
-const drawerWidth = 240;
+// ============================================================================
+// Constants
+// ============================================================================
+const DRAWER_WIDTH = 240;
 
+/**
+ * AdminLayout Component
+ * 
+ * Main layout wrapper for admin pages with sidebar navigation
+ * 
+ * @returns {JSX.Element} Admin layout component
+ */
 const AdminLayout = () => {
-  
+  // ==========================================================================
+  // Hooks and State
+  // ==========================================================================
   const theme = useTheme();
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
+  // ==========================================================================
+  // Navigation Menu Items
+  // ==========================================================================
+  const adminMenuItems = [
+    { 
+      text: 'Dashboard', 
+      icon: <DashboardIcon />, 
+      path: '/admin',
+      description: 'Overview and analytics'
+    },
+    { 
+      text: 'Manage Students', 
+      icon: <PeopleIcon />, 
+      path: '/admin/manage-students',
+      description: 'Add, edit, and manage students'
+    },
+    { 
+      text: 'Attendance', 
+      icon: <AttendanceIcon />, 
+      path: '/admin/manage-attendance',
+      description: 'Track and manage attendance'
+    },
+    { 
+      text: 'Fee Management', 
+      icon: <FeesIcon />, 
+      path: '/admin/manage-fees',
+      description: 'Process fee payments'
+    },
+    { 
+      text: 'Mess Management', 
+      icon: <MessIcon />, 
+      path: '/admin/mess-management',
+      description: 'Menu and billing management'
+    },
+    { 
+      text: 'Settings', 
+      icon: <SettingsIcon />, 
+      path: '/admin/settings',
+      description: 'System configuration'
+    },
+  ];
+
+  // ==========================================================================
+  // Event Handlers
+  // ==========================================================================
+
+  /**
+   * Toggle mobile drawer visibility
+   */
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
+  /**
+   * Handle navigation to a route
+   * @param {string} path - Route path to navigate to
+   */
+  const handleNavigation = (path) => {
+    navigate(path);
+    // Close mobile drawer after navigation
+    if (isMobile) {
+      setMobileOpen(false);
+    }
+  };
+
+  /**
+   * Handle user logout
+   */
   const handleLogout = async () => {
     try {
       await logout();
@@ -55,79 +148,99 @@ const AdminLayout = () => {
     }
   };
 
-  const adminMenuItems = [
-    { text: 'Dashboard', icon: <DashboardIcon />, path: '/admin' },
-    { text: 'Manage Students', icon: <PeopleIcon />, path: '/admin/manage-students' },
-    { text: 'Attendance', icon: <AttendanceIcon />, path: '/admin/manage-attendance' },
-    { text: 'Fee Management', icon: <FeesIcon />, path: '/admin/manage-fees' },
-    { text: 'Mess Management', icon: <MessIcon />, path: '/admin/mess-management' },
-    { text: 'Settings', icon: <SettingsIcon />, path: '/admin/settings' },
-  ];
-
-  const drawer = (
-    <Box sx={{ overflow: 'auto', height: '100%', display: 'flex', flexDirection: 'column' }}>
+  // ==========================================================================
+  // Sidebar Drawer Content
+  // ==========================================================================
+  const drawerContent = (
+    <Box sx={{ 
+      overflow: 'auto', 
+      height: '100%', 
+      display: 'flex', 
+      flexDirection: 'column',
+      backgroundColor: theme.palette.background.paper
+    }}>
       {/* Admin Profile Section */}
-      <Box sx={{ p: 2, textAlign: 'center' }}>
+      <Box sx={{ 
+        p: 3, 
+        textAlign: 'center',
+        background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
+        color: 'white'
+      }}>
         <Avatar
           src={user?.profileImage || '/default-avatar.jpg'}
           sx={{ 
             width: 80, 
             height: 80, 
             mx: 'auto',
-            border: `3px solid ${theme.palette.primary.main}`,
+            mb: 2,
+            border: `3px solid rgba(255, 255, 255, 0.3)`,
           }}
         />
-        <Typography variant="h6" sx={{ mt: 1 }}>
+        <Typography variant="h6" sx={{ fontWeight: 600 }}>
           {user?.name || 'Admin'}
         </Typography>
-        <Typography variant="body2" color="text.secondary">
+        <Typography variant="body2" sx={{ opacity: 0.9 }}>
           Admin Panel
         </Typography>
       </Box>
+
       <Divider />
 
-      {/* Menu Items */}
-      <List sx={{ flexGrow: 1 }}>
-        {adminMenuItems.map((item) => (
-          <ListItem key={item.text} disablePadding>
-            <ListItemButton 
-              onClick={() => {
-                navigate(item.path);
-                if (isMobile) setMobileOpen(false);
-              }}
-              selected={location.pathname === item.path}
-              sx={{
-                '&.Mui-selected': {
-                  backgroundColor: theme.palette.action.selected,
-                  '&:hover': {
-                    backgroundColor: theme.palette.action.selected,
+      {/* Navigation Menu Items */}
+      <List sx={{ flexGrow: 1, p: 2 }}>
+        {adminMenuItems.map((item) => {
+          const isActive = location.pathname === item.path;
+          return (
+            <ListItem key={item.text} disablePadding sx={{ mb: 1 }}>
+              <ListItemButton 
+                onClick={() => handleNavigation(item.path)}
+                selected={isActive}
+                sx={{
+                  borderRadius: 2,
+                  '&.Mui-selected': {
+                    backgroundColor: `${theme.palette.primary.main}15`,
+                    borderLeft: `4px solid ${theme.palette.primary.main}`,
+                    '&:hover': {
+                      backgroundColor: `${theme.palette.primary.main}25`,
+                    }
                   }
-                }
-              }}
-            >
-              <ListItemIcon sx={{ 
-                color: location.pathname === item.path 
-                  ? theme.palette.primary.main 
-                  : theme.palette.text.secondary
-              }}>
-                {item.icon}
-              </ListItemIcon>
-              <ListItemText 
-                primary={item.text} 
-                primaryTypographyProps={{
-                  fontWeight: location.pathname === item.path ? 'bold' : 'normal'
                 }}
-              />
-            </ListItemButton>
-          </ListItem>
-        ))}
+              >
+                <ListItemIcon sx={{ 
+                  color: isActive 
+                    ? theme.palette.primary.main 
+                    : theme.palette.text.secondary,
+                  minWidth: 40
+                }}>
+                  {item.icon}
+                </ListItemIcon>
+                <ListItemText 
+                  primary={item.text} 
+                  primaryTypographyProps={{
+                    fontWeight: isActive ? 600 : 400
+                  }}
+                />
+              </ListItemButton>
+            </ListItem>
+          );
+        })}
       </List>
+
       <Divider />
 
       {/* Logout Button */}
-      <List>
+      <List sx={{ p: 2 }}>
         <ListItem disablePadding>
-          <ListItemButton onClick={handleLogout}>
+          <ListItemButton 
+            onClick={handleLogout}
+            sx={{
+              borderRadius: 2,
+              color: theme.palette.error.main,
+              '&:hover': {
+                backgroundColor: `${theme.palette.error.main}15`,
+              }
+            }}
+          >
             <ListItemIcon sx={{ color: theme.palette.error.main }}>
               <LogoutIcon />
             </ListItemIcon>
@@ -138,24 +251,28 @@ const AdminLayout = () => {
     </Box>
   );
 
-  // Redirect to login if not admin
+  // ==========================================================================
+  // Access Control - Redirect if not admin
+  // ==========================================================================
   if (user?.role !== 'admin') {
-    return null; // Or return <Navigate to="/login" replace /> if preferred
+    return null; // ProtectedRoute should handle redirect
   }
 
-  
-
+  // ==========================================================================
+  // Render Layout
+  // ==========================================================================
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: 'flex', minHeight: '100vh' }}>
       <CssBaseline />
       
-      {/* AppBar for Mobile */}
+      {/* Top App Bar - Mobile Only */}
       <AppBar
         position="fixed"
         sx={{
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
-          ml: { sm: `${drawerWidth}px` },
-          zIndex: theme.zIndex.drawer + 1
+          width: { sm: `calc(100% - ${DRAWER_WIDTH}px)` },
+          ml: { sm: `${DRAWER_WIDTH}px` },
+          zIndex: theme.zIndex.drawer + 1,
+          backgroundColor: theme.palette.primary.main
         }}
       >
         <Toolbar>
@@ -176,12 +293,16 @@ const AdminLayout = () => {
         </Toolbar>
       </AppBar>
 
-      {/* Sidebar Drawer */}
+      {/* Sidebar Navigation Drawer */}
       <Box
         component="nav"
-        sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+        sx={{ 
+          width: { sm: DRAWER_WIDTH }, 
+          flexShrink: { sm: 0 } 
+        }}
         aria-label="admin navigation"
       >
+        {/* Mobile Drawer - Temporary */}
         <Drawer
           variant="temporary"
           open={mobileOpen}
@@ -191,40 +312,42 @@ const AdminLayout = () => {
             display: { xs: 'block', sm: 'none' },
             '& .MuiDrawer-paper': { 
               boxSizing: 'border-box', 
-              width: drawerWidth 
+              width: DRAWER_WIDTH 
             },
           }}
         >
-          {drawer}
+          {drawerContent}
         </Drawer>
+
+        {/* Desktop Drawer - Permanent */}
         <Drawer
           variant="permanent"
           sx={{
             display: { xs: 'none', sm: 'block' },
             '& .MuiDrawer-paper': { 
               boxSizing: 'border-box', 
-              width: drawerWidth 
+              width: DRAWER_WIDTH 
             },
           }}
           open
         >
-          {drawer}
+          {drawerContent}
         </Drawer>
       </Box>
 
-      {/* Main Content */}
+      {/* Main Content Area */}
       <Box
         component="main"
         sx={{ 
           flexGrow: 1, 
-          p: 3, 
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
+          p: { xs: 2, sm: 3 },
+          width: { sm: `calc(100% - ${DRAWER_WIDTH}px)` },
           minHeight: '100vh',
           backgroundColor: theme.palette.background.default
         }}
       >
-        <Toolbar /> 
-        <Outlet />
+        <Toolbar /> {/* Spacer for fixed AppBar */}
+        <Outlet /> {/* Child routes render here */}
       </Box>
     </Box>
   );

@@ -125,7 +125,7 @@ const LoginForm = () => {
     <Box
       sx={{
         minHeight: '100vh',
-        background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
+        background: `linear-gradient(135deg, #003366 0%, #001f3f 100%)`, // NITJ Official Blue Gradient
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -146,7 +146,7 @@ const LoginForm = () => {
           {/* Header Section */}
           <Box
             sx={{
-              background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
+              background: `linear-gradient(135deg, #003366 0%, #001f3f 100%)`, // NITJ Official Blue Gradient
               p: 4,
               textAlign: 'center',
               color: 'white',
@@ -274,9 +274,9 @@ const LoginForm = () => {
                   py: 1.5,
                   fontSize: '1.1rem',
                   fontWeight: 600,
-                  background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
+                  background: `linear-gradient(135deg, #003366 0%, #001f3f 100%)`, // NITJ Official Blue
                   '&:hover': {
-                    background: `linear-gradient(135deg, ${theme.palette.primary.dark} 0%, ${theme.palette.primary.main} 100%)`,
+                    background: `linear-gradient(135deg, #001f3f 0%, #003366 100%)`, // Reverse gradient on hover
                   },
                 }}
               >

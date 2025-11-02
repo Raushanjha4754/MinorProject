@@ -53,7 +53,8 @@ app.post('/api/login', (req, res) => {
         hostel: { name: 'Hostel A' }
       }
     });
-  } else if (role === 'admin' && identifier === '12345678' && password === 'admin123') {
+  }
+  else if (role === 'admin' && identifier === '12345678' && password === 'admin123') {
     res.json({
       token: 'mock-admin-token-' + Date.now(),
       user: {
@@ -92,7 +93,8 @@ app.post('/api/register', (req, res) => {
         designation: req.body.designation || 'Administrator'
       }
     });
-  } else {
+  }
+  else {
     res.json({
       token: 'mock-student-token-' + Date.now(),
       user: {

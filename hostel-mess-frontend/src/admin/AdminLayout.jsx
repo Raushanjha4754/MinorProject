@@ -159,11 +159,11 @@ const AdminLayout = () => {
       flexDirection: 'column',
       backgroundColor: theme.palette.background.paper
     }}>
-      {/* Admin Profile Section */}
+      {/* Admin Profile Section - NITJ Blue Theme */}
       <Box sx={{ 
         p: 3, 
         textAlign: 'center',
-        background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
+        background: `linear-gradient(135deg, #003366 0%, #001f3f 100%)`, // NITJ Official Blue Gradient
         color: 'white'
       }}>
         <Avatar

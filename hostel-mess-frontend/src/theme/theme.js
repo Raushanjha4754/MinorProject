@@ -1,38 +1,39 @@
 import { createTheme } from '@mui/material/styles';
 
-// Color palette
+// Color palette - NIT Jalandhar Official Theme
+// Based on institutional blue and white scheme
 const colors = {
   primary: {
-    main: '#2563eb', // Modern blue
-    light: '#3b82f6',
-    dark: '#1d4ed8',
+    main: '#003366', // NITJ Official Blue - Dark institutional blue
+    light: '#1e40af',
+    dark: '#001f3f',
     contrastText: '#ffffff',
   },
   secondary: {
-    main: '#f59e0b', // Amber for accents
-    light: '#fbbf24',
-    dark: '#d97706',
+    main: '#ffa500', // Institutional Gold/Amber accent
+    light: '#ffb84d',
+    dark: '#cc8400',
     contrastText: '#ffffff',
   },
   success: {
-    main: '#10b981', // Emerald green
-    light: '#34d399',
-    dark: '#059669',
+    main: '#22c55e', // Success green
+    light: '#4ade80',
+    dark: '#16a34a',
   },
   warning: {
-    main: '#f59e0b', // Amber
+    main: '#f59e0b', // Amber warning
     light: '#fbbf24',
     dark: '#d97706',
   },
   error: {
-    main: '#ef4444', // Red
-    light: '#f87171',
-    dark: '#dc2626',
+    main: '#dc2626', // Error red
+    light: '#ef4444',
+    dark: '#b91c1c',
   },
   info: {
-    main: '#3b82f6', // Blue
-    light: '#60a5fa',
-    dark: '#2563eb',
+    main: '#0066cc', // Information blue (lighter institutional blue)
+    light: '#3b82f6',
+    dark: '#003366',
   },
   grey: {
     50: '#f9fafb',
@@ -47,21 +48,21 @@ const colors = {
     900: '#111827',
   },
   background: {
-    default: '#f8fafc',
+    default: '#ffffff', // Clean white background (NITJ style)
     paper: '#ffffff',
     card: '#ffffff',
-    sidebar: '#1e293b',
+    sidebar: '#003366', // Dark blue sidebar matching NITJ theme
   },
   text: {
-    primary: '#1f2937',
-    secondary: '#6b7280',
-    disabled: '#9ca3af',
+    primary: '#1a1a1a', // Dark text on white
+    secondary: '#4a5568',
+    disabled: '#a0aec0',
   },
 };
 
-// Typography
+// Typography - Professional institutional style
 const typography = {
-  fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
+  fontFamily: '"Roboto", "Helvetica Neue", "Arial", "Segoe UI", sans-serif', // Clean sans-serif like NITJ website
   fontSize: 14,
   fontWeightLight: 300,
   fontWeightRegular: 400,
@@ -229,12 +230,12 @@ const components = {
         borderRadius: 8,
         margin: '4px 8px',
         '&:hover': {
-          backgroundColor: 'rgba(37, 99, 235, 0.08)',
+          backgroundColor: 'rgba(0, 51, 102, 0.08)', // NITJ blue hover
         },
         '&.Mui-selected': {
-          backgroundColor: 'rgba(37, 99, 235, 0.12)',
+          backgroundColor: 'rgba(0, 51, 102, 0.12)',
           '&:hover': {
-            backgroundColor: 'rgba(37, 99, 235, 0.16)',
+            backgroundColor: 'rgba(0, 51, 102, 0.16)',
           },
         },
       },

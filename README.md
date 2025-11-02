@@ -8,7 +8,20 @@ The **Hostel and Mess Management System** is a full-stack web application design
 
 **Want to run this locally?** Check out the detailed [SETUP.md](./SETUP.md) guide for step-by-step instructions.
 
-**TL;DR Quick Start:**
+### Option 1: Single Command (Recommended) ⭐
+
+From the project root directory:
+
+```bash
+# Install all dependencies (first time only)
+npm install
+npm run install:all
+
+# Start both backend and frontend
+npm run dev
+```
+
+### Option 2: Separate Terminals
 
 ```bash
 # Terminal 1 - Backend
@@ -22,7 +35,7 @@ npm install
 npm start
 ```
 
-**Prerequisites:** Node.js, MongoDB, and npm installed.
+**Prerequisites:** Node.js (v16+), MongoDB (v4.4+), and npm installed.
 
 ---
 
@@ -51,48 +64,61 @@ npm start
 
 ## 💻 Frontend Details
 
-- **Framework**: React.js
-- **Routing**: React Router DOM
-- **UI/UX**: Custom dashboard with sidebar navigation
-- **Charts**: Bar and pie charts for attendance and fee stats
+- **Framework**: React.js (v19.1.0)
+- **UI Library**: Material-UI (MUI v7.0.2)
+- **Routing**: React Router DOM (v7.5.3)
+- **State Management**: React Context API + Redux Toolkit
+- **Charts**: Recharts (v2.15.3) for data visualization
+- **Theme**: NIT Jalandhar Official Blue & White Theme
 - **Features**:
-  - Responsive design (accessible via mobile and desktop)
-  - Secure role-based login (Student/Admin)
-  - Dynamic content updates with API integration
-  - Form validation and notification system
-  - Dark mode toggle (for admin)
+  - Responsive design (mobile, tablet, desktop)
+  - Secure role-based authentication (Student/Admin)
+  - NITJ official color scheme and branding
+  - Professional institutional layout
+  - Real-time dashboard with charts and statistics
+  - Form validation with Yup and Formik
+  - Notification system
+  - Date pickers for scheduling
 
 ---
 
 ## 🖥️ Backend Details
 
 - **Platform**: Node.js
-- **Framework**: Express.js
+- **Framework**: Express.js (v5.1.0)
 - **Database**: MongoDB (NoSQL)
-- **ODM**: Mongoose
+- **ODM**: Mongoose (v8.14.1)
 - **Authentication**: JWT-based login system
 - **Security**:
   - Password hashing with Bcrypt.js
   - Input validation via Express Validator
   - HTTP protection with Helmet
   - Rate limiting and XSS protection
+  - MongoDB injection prevention
+  - CORS configuration
 - **API Architecture**:
-  - `/api/auth` - Login & Registration
-  - `/api/students` - Student profile & records
-  - `/api/attendance` - Attendance tracking
-  - `/api/fees` - Fee and billing management
-  - `/api/complaints` - Complaint system
-  - `/api/mess` - Mess menu and billing
+  - `POST /api/login` - User authentication
+  - `POST /api/register` - User registration
+  - `GET /api/students/me` - Get student profile
+  - `GET /api/attendance` - Attendance records
+  - `GET /api/fees` - Fee information
+  - `GET /api/complaints` - Complaints list
+  - `POST /api/complaints` - Submit complaint
+  - `GET /api/mess/menu` - Mess menu
+  - `GET /api/mess/billing` - Mess billing
+  - `GET /api/health` - Server health check
 
 ---
 
 ## 👨‍💻 Developed By
 
-**Minor Project – B.Tech, Instrumentation and Control Engineering**  
+**Minor Project Team – B.Tech, Instrumentation and Control Engineering**  
 **Dr. B R Ambedkar National Institute of Technology, Jalandhar**
 
 - [Raushan Jha](https://github.com/Raushanjha4754)
-
+- [Monib Singha](https://github.com/Monib007)
+- [Bhaskar Kumar](https://github.com/Dhairya250974)
+- [Akhilesh Chauhan](https://github.com/Akhilesh278)
 
 ---
 
@@ -108,6 +134,61 @@ National Institute of Technology, Jalandhar
 
 ---
 
+## 🎨 Design & Theme
+
+- **Color Scheme**: NIT Jalandhar Official Blue (#003366) and White
+- **Typography**: Roboto (Professional institutional font)
+- **Layout**: Modern, clean interface matching NITJ website design
+- **Responsive**: Fully responsive across all device sizes
+- **Accessibility**: WCAG compliant with focus indicators and semantic HTML
+
+---
+
+## 📦 Project Structure
+
+```
+MinorProject/
+├── server/                    # Backend (Node.js + Express)
+│   ├── config/               # Configuration files
+│   ├── controllers/          # Route controllers
+│   ├── models/               # Mongoose models
+│   ├── routes/               # API routes
+│   ├── middleware/           # Custom middleware
+│   ├── utils/                # Utility functions
+│   └── server.js             # Main server file
+│
+├── hostel-mess-frontend/     # Frontend (React)
+│   ├── src/
+│   │   ├── admin/            # Admin components
+│   │   ├── auth/             # Authentication
+│   │   ├── components/       # Reusable components
+│   │   ├── features/         # Feature modules
+│   │   ├── layouts/          # Layout components
+│   │   └── theme/            # NITJ theme configuration
+│   └── public/               # Static assets
+│
+├── package.json              # Root scripts (run both servers)
+├── SETUP.md                  # Detailed setup guide
+└── README.md                 # This file
+```
+
+---
+
+## 🛠️ Available Scripts
+
+From the **project root**:
+
+| Command | Description |
+|---------|-------------|
+| `npm install` | Install root dependencies (concurrently) |
+| `npm run install:all` | Install all dependencies (backend + frontend) |
+| `npm run dev` | **Start both backend and frontend** |
+| `npm run dev:server` | Start only backend |
+| `npm run dev:client` | Start only frontend |
+| `npm run seed` | Seed database with sample data |
+
+---
+
 ## 📈 Future Enhancements
 
 - 📱 Mobile App (React Native / Flutter)
@@ -116,7 +197,37 @@ National Institute of Technology, Jalandhar
 - 📊 AI-powered analytics and report generation
 - 🧾 Auto-generated receipts and downloadable fee summaries
 - 📦 Docker + Kubernetes for scalable deployment
+- 🌙 Dark mode toggle
+- 📧 Email notifications
 
 ---
 
-> 🚀 This project was developed as part of the Minor Project requirement for the 6th Semester at NIT Jalandhar, aimed at solving real-world hostel management inefficiencies through technology.
+## 📚 Documentation
+
+- **[SETUP.md](./SETUP.md)** - Complete setup and installation guide
+- **Theme Configuration** - `hostel-mess-frontend/src/theme/theme.js`
+- **API Documentation** - Check individual route files in `server/routes/`
+
+---
+
+## 🎯 Key Features Summary
+
+### Student Portal
+✅ Dashboard with statistics and charts  
+✅ Fee payment tracking  
+✅ Attendance monitoring  
+✅ Mess menu viewing  
+✅ Mess billing and balance  
+✅ Complaint submission and tracking  
+
+### Admin Portal
+✅ Student management (CRUD operations)  
+✅ Attendance management and approval  
+✅ Fee collection tracking  
+✅ Mess menu and billing management  
+✅ Complaint resolution system  
+✅ Analytics dashboard with charts  
+
+---
+
+> 🚀 This project was developed as part of the Minor Project requirement for the 6th Semester at NIT Jalandhar, aimed at solving real-world hostel management inefficiencies through technology. The design follows NIT Jalandhar's official branding guidelines.

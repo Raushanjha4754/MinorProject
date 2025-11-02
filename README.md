@@ -88,13 +88,11 @@ npm start
 
 ## 👨‍💻 Developed By
 
-**Minor Project Team – B.Tech, Instrumentation and Control Engineering**  
+**Minor Project – B.Tech, Instrumentation and Control Engineering**  
 **Dr. B R Ambedkar National Institute of Technology, Jalandhar**
 
 - [Raushan Jha](https://github.com/Raushanjha4754)
-- [Monib Singha](https://github.com/Monib007)
-- [Bhaskar Kumar](https://github.com/Dhairya250974)
-- [Akhilesh Chauhan](https://github.com/Akhilesh278)
+
 
 ---
 

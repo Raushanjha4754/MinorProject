@@ -1,28 +1,26 @@
+/**
+ * ============================================================================
+ * Application Entry Point
+ * Hostel Mess Management System - NIT Jalandhar
+ * ============================================================================
+ * 
+ * This is the root entry point for the React application.
+ * All providers (Router, Theme, Auth) are set up in App.jsx
+ */
+
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom';
 import App from './App';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
+import './index.css';
 
-const theme = createTheme({
-  palette: {
-    primary: { main: '#1976d2' },
-    secondary: { main: '#dc004e' },
-    background: { default: '#f5f5f5' },
-  },
-});
-
+// Get the root DOM element
 const container = document.getElementById('root');
 const root = createRoot(container);
 
+// Render the application
+// Note: BrowserRouter, ThemeProvider, and AuthProvider are all in App.jsx
 root.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <App />
-      </ThemeProvider>
-    </BrowserRouter>
+    <App />
   </React.StrictMode>
 );

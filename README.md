@@ -4,9 +4,32 @@ The **Hostel and Mess Management System** is a full-stack web application design
 
 ---
 
+## 🚀 Quick Start
+
+**Want to run this locally?** Check out the detailed [SETUP.md](./SETUP.md) guide for step-by-step instructions.
+
+**TL;DR Quick Start:**
+
+```bash
+# Terminal 1 - Backend
+cd server
+npm install
+npm run dev
+
+# Terminal 2 - Frontend
+cd hostel-mess-frontend
+npm install
+npm start
+```
+
+**Prerequisites:** Node.js, MongoDB, and npm installed.
+
+---
+
 ## 🔧 Features
 
 ### 🧑‍🎓 Student Portal
+
 - ✅ Secure student registration and login
 - 🏠 View hostel room details and personal profile
 - 📆 Mark and monitor daily mess attendance
@@ -15,6 +38,7 @@ The **Hostel and Mess Management System** is a full-stack web application design
 - 📊 Dashboard with summary widgets for fees, attendance, and mess balance
 
 ### 🧑‍💼 Admin Portal
+
 - 🗂️ Manage student records (Add/Update/Delete)
 - 🛏️ Allocate and manage hostel rooms
 - 📈 Monitor attendance with approval-based leave system
@@ -77,12 +101,12 @@ The **Hostel and Mess Management System** is a full-stack web application design
 ## 🧑‍🏫 Guided By
 
 **Dr. Dilbag Singh**  
-*Professor*  
+_Professor_  
 Department of Instrumentation and Control Engineering  
 National Institute of Technology, Jalandhar
 
- **Ashutosh Anand**  
- *Senior Software Developer* <br> Paytm
+**Ashutosh Anand**  
+ _Senior Software Developer_ <br> Paytm
 
 ---
 

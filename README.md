@@ -144,6 +144,44 @@ National Institute of Technology, Jalandhar
 
 ---
 
+## 📸 Screenshots
+
+### Login Page
+![Login Page](./screenshots/login-page.png)
+*NITJ-themed login interface with role selection*
+
+### Student Dashboard
+![Student Dashboard](./screenshots/student-dashboard.png)
+*Student portal dashboard with statistics and charts*
+
+### Admin Dashboard
+![Admin Dashboard](./screenshots/admin-dashboard.png)
+*Admin analytics dashboard with overview statistics*
+
+### Fee Payment
+![Fee Payment](./screenshots/fee-payment.png)
+*Fee payment and tracking interface*
+
+### Attendance Management
+![Attendance](./screenshots/attendance-view.png)
+*Student attendance tracking and monitoring*
+
+### Mess Menu
+![Mess Menu](./screenshots/mess-menu.png)
+*Weekly mess menu display*
+
+### Complaints Management
+![Complaints](./screenshots/complaints-page.png)
+*Complaint submission and tracking*
+
+### Responsive Design
+![Mobile View](./screenshots/responsive-mobile.png)
+*Mobile-responsive interface*
+
+> **Note**: Screenshots will be added to the `screenshots/` folder. See [SCREENSHOTS.md](./SCREENSHOTS.md) for instructions on capturing and adding screenshots.
+
+---
+
 ## 📦 Project Structure
 
 ```

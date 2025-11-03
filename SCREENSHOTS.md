@@ -28,33 +28,40 @@ MinorProject/
 ### Essential Screenshots to Include:
 
 1. **Login Page** (`login-page.png`)
+
    - Shows the NITJ-themed login form
    - Role selection (Student/Admin)
    - NITJ logo display
 
 2. **Student Dashboard** (`student-dashboard.png`)
+
    - Overview of stats cards
    - Attendance chart
    - Profile section
 
 3. **Admin Dashboard** (`admin-dashboard.png`)
+
    - Admin analytics
    - Charts and statistics
    - Quick actions
 
 4. **Fee Payment Page** (`fee-payment.png`)
+
    - Fee payment interface
    - Payment history
 
 5. **Attendance View** (`attendance-view.png`)
+
    - Attendance records
    - Monthly statistics
 
 6. **Mess Menu** (`mess-menu.png`)
+
    - Weekly/daily menu display
    - Meal options
 
 7. **Complaints Page** (`complaints-page.png`)
+
    - Complaint list
    - Submit complaint form
 
@@ -78,6 +85,7 @@ MinorProject/
 ### Step 2: Save Screenshots
 
 Save screenshots in `screenshots/` folder with descriptive names:
+
 - Use lowercase and hyphens
 - Be descriptive (e.g., `student-dashboard-overview.png`)
 
@@ -90,7 +98,7 @@ Add screenshots section to README.md (see template below)
 ## 📐 Screenshot Specifications
 
 - **Format**: PNG or JPG
-- **Size**: 
+- **Size**:
   - Desktop: 1920x1080 or 1440x900 recommended
   - Mobile: Capture actual mobile viewport
 - **Quality**: High resolution (at least 1920px width)
@@ -130,11 +138,13 @@ Add screenshots section to README.md (see template below)
 ## 🔧 Tools for Screenshots
 
 1. **Browser Extensions**:
+
    - Full Page Screen Capture (Chrome)
    - Awesome Screenshot
    - FireShot
 
 2. **Desktop Tools**:
+
    - Snipping Tool (Windows)
    - Snagit
    - Lightshot
@@ -146,4 +156,3 @@ Add screenshots section to README.md (see template below)
 ---
 
 **Note**: Screenshots will be added to README.md once you've captured them!
-

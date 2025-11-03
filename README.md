@@ -147,36 +147,44 @@ National Institute of Technology, Jalandhar
 ## 📸 Screenshots
 
 ### Login Page
+
 ![Login Page](./screenshots/login-page.png)
-*NITJ-themed login interface with role selection*
+_NITJ-themed login interface with role selection_
 
 ### Student Dashboard
+
 ![Student Dashboard](./screenshots/student-dashboard.png)
-*Student portal dashboard with statistics and charts*
+_Student portal dashboard with statistics and charts_
 
 ### Admin Dashboard
+
 ![Admin Dashboard](./screenshots/admin-dashboard.png)
-*Admin analytics dashboard with overview statistics*
+_Admin analytics dashboard with overview statistics_
 
 ### Fee Payment
+
 ![Fee Payment](./screenshots/fee-payment.png)
-*Fee payment and tracking interface*
+_Fee payment and tracking interface_
 
 ### Attendance Management
+
 ![Attendance](./screenshots/attendance-view.png)
-*Student attendance tracking and monitoring*
+_Student attendance tracking and monitoring_
 
 ### Mess Menu
+
 ![Mess Menu](./screenshots/mess-menu.png)
-*Weekly mess menu display*
+_Weekly mess menu display_
 
 ### Complaints Management
+
 ![Complaints](./screenshots/complaints-page.png)
-*Complaint submission and tracking*
+_Complaint submission and tracking_
 
 ### Responsive Design
+
 ![Mobile View](./screenshots/responsive-mobile.png)
-*Mobile-responsive interface*
+_Mobile-responsive interface_
 
 > **Note**: Screenshots will be added to the `screenshots/` folder. See [SCREENSHOTS.md](./SCREENSHOTS.md) for instructions on capturing and adding screenshots.
 
@@ -216,14 +224,14 @@ MinorProject/
 
 From the **project root**:
 
-| Command | Description |
-|---------|-------------|
-| `npm install` | Install root dependencies (concurrently) |
+| Command               | Description                                   |
+| --------------------- | --------------------------------------------- |
+| `npm install`         | Install root dependencies (concurrently)      |
 | `npm run install:all` | Install all dependencies (backend + frontend) |
-| `npm run dev` | **Start both backend and frontend** |
-| `npm run dev:server` | Start only backend |
-| `npm run dev:client` | Start only frontend |
-| `npm run seed` | Seed database with sample data |
+| `npm run dev`         | **Start both backend and frontend**           |
+| `npm run dev:server`  | Start only backend                            |
+| `npm run dev:client`  | Start only frontend                           |
+| `npm run seed`        | Seed database with sample data                |
 
 ---
 
@@ -251,20 +259,22 @@ From the **project root**:
 ## 🎯 Key Features Summary
 
 ### Student Portal
+
 ✅ Dashboard with statistics and charts  
 ✅ Fee payment tracking  
 ✅ Attendance monitoring  
 ✅ Mess menu viewing  
 ✅ Mess billing and balance  
-✅ Complaint submission and tracking  
+✅ Complaint submission and tracking
 
 ### Admin Portal
+
 ✅ Student management (CRUD operations)  
 ✅ Attendance management and approval  
 ✅ Fee collection tracking  
 ✅ Mess menu and billing management  
 ✅ Complaint resolution system  
-✅ Analytics dashboard with charts  
+✅ Analytics dashboard with charts
 
 ---
 

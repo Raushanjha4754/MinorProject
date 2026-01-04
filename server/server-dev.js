@@ -67,7 +67,8 @@ app.post('/api/login', (req, res) => {
         designation: 'System Administrator'
       }
     });
-  } else {
+  }
+  else {
     res.status(401).json({
       message: 'Invalid credentials'
     });

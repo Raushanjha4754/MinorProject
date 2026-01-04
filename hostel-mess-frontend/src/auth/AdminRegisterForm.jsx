@@ -505,7 +505,7 @@ const AdminRegisterForm = () => {
         {/* Footer */}
         <Box sx={{ textAlign: 'center', mt: 3 }}>
           <Typography variant="body2" color="white" sx={{ opacity: 0.8 }}>
-            © 2024 Dr. B.R. Ambedkar NIT Jalandhar. All rights reserved.
+            © 2025 Dr. B.R. Ambedkar NIT Jalandhar. All rights reserved.
           </Typography>
         </Box>
       </Container>

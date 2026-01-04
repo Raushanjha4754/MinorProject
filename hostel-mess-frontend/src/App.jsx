@@ -34,11 +34,11 @@ import LoginForm from "./auth/LoginForm";
 import AdminRegisterForm from './auth/AdminRegisterForm';
 
 // Layout Components
-import StudentLayout from "./layouts/StudentLayout";
+import StudentLayout from "./student/layouts/StudentLayout";
 import AdminLayout from "./admin/AdminLayout";
 
 // Student Feature Components
-import StudentDashboard from "./features/dashboard/StudentDashboard";
+import StudentDashboard from "./student/features/dashboard/StudentDashboard";
 import FeePayment from "./features/fees/FeePayment";
 import AttendanceView from "./features/attendance/AttendanceView";
 import MessMenu from "./features/mess/MessMenu";
